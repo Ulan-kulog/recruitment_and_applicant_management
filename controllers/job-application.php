@@ -1,0 +1,136 @@
+<?php
+
+session_start();
+
+$config = require 'config.php';
+$db = new Database($config['database']);
+$heading = 'JOB-APPLICATION';
+
+$applications = $db->query("SELECT
+ applicants.*,
+ applicationstatus.status
+ FROM applicants
+ inner join applicationstatus on applicants.applicant_id = applicationstatus.applicant_id
+ WHERE user_id = :user_id", [
+    ':user_id' => $_SESSION['user_id']
+])->fetchAll();
+
+$user_info = $db->query("SELECT first_name, last_name, email FROM user_accounts WHERE user_id = :user_id", [
+    ':user_id' => $_SESSION['user_id']
+])->fetch();
+// dd($user_email);
+if (count($applications) >= 1) {
+    $currentApplication;
+    foreach ($applications as $application) {
+        if ($application['status'] == 'hired') {
+            $currentApplication = 2;
+            break;
+        } elseif ($application['status'] == 'declined') {
+        } elseif ($application['status'] != 'rejected') {
+            $currentApplication = 1;
+        }
+    }
+    // dd($application);
+    if ($currentApplication ?? '' == 1) {
+        // dd($currentApplication);
+        $_SESSION['unfinished_application'] = true;
+        header('Location: /application');
+        exit();
+    } elseif ($currentApplication ?? '' == 2) {
+        // dd($currentApplication);
+        $_SESSION['already_hired'] = true;
+        header('Location: /application');
+    }
+}
+
+$success = false;
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $errors = [];
+    $uploadDir = "uploads/documents/" . $_SESSION['user_id'] . "/";
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+    $fileFields = ['resume', 'philhealth', 'sss', 'pagibig'];
+    $filePaths = [];
+    foreach ($fileFields as $field) {
+        if (isset($_FILES[$field]) && $_FILES[$field]['error'] !== UPLOAD_ERR_NO_FILE) {
+            $file = $_FILES[$field];
+            $allowedExtensions = ['pdf', 'doc', 'docx'];
+            $fileExtension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                $errors[$field] = ucfirst($field) . " must be a PDF, DOC, or DOCX file.";
+                continue;
+            }
+            if ($file["size"] > 2 * 1024 * 1024) {
+                $errors[$field] = ucfirst($field) . " must be less than 2MB.";
+                continue;
+            }
+            $fileName = $_SESSION['user_id'] . "_" . $field . "_" . time() . "." . $fileExtension;
+            $filePath = $uploadDir . $fileName;
+            if (move_uploaded_file($file["tmp_name"], $filePath)) {
+                $filePaths[$field] = $filePath;
+            } else {
+                $errors[$field] = "Error uploading " . ucfirst($field) . ".";
+            }
+        } else {
+            $errors[$field] = ucfirst($field) . " is required.";
+        }
+    }
+    validate('first_name', $errors);
+    validate('last_name', $errors);
+    validate('contact_number', $errors);
+    validate('address', $errors);
+    validate('email', $errors);
+    if ($_POST['age'] <= 17) {
+        $errors['age'] = "You must be at least 18 years old to apply.";
+    }
+    if (empty($errors)) {
+        $db->query("INSERT INTO applicants 
+                            (user_id, first_name, last_name, contact_number, age, date_of_birth, address, email, resume, posting_id) 
+                            VALUES (:user_id, :first_name, :last_name, :contact_number, :age, :date_of_birth, :address, :email, :resume, :posting_id)", [
+            ':user_id' => $_SESSION['user_id'],
+            ':first_name' => $_POST['first_name'],
+            ':last_name' => $_POST['last_name'],
+            ':contact_number' => $_POST['contact_number'],
+            ':age' => $_POST['age'],
+            ':date_of_birth' => $_POST['date_of_birth'],
+            ':address' => $_POST['address'],
+            ':email' => $_POST['email'],
+            ':resume' => $filePaths['resume'] ?? null,
+            ':posting_id' => $_GET['id'],
+        ]);
+
+        $applicant_id = $db->pdo->lastInsertId();
+
+        $db->query("INSERT INTO documents (applicant_id, philhealth, sss, pagibig) 
+                    VALUES (:applicant_id, :philhealth, :sss, :pagibig)", [
+            ':applicant_id' => $applicant_id,
+            ':philhealth' => $filePaths['philhealth'] ?? null,
+            ':sss' => $filePaths['sss'] ?? null,
+            ':pagibig' => $filePaths['pagibig'] ?? null,
+        ]);
+
+        $recruiter = $db->query('SELECT posted_by, job_title FROM jobpostings WHERE posting_id = :posting_id', [
+            'posting_id' => $_GET['id'],
+        ])->fetch();
+
+        $db->query("INSERT INTO applicationstatus (applicant_id, status, updated_by) VALUES (:applicant_id, :status, :updated_by)", [
+            ':applicant_id' => $applicant_id,
+            ':status' => 'applied',
+            ':updated_by' => $recruiter['posted_by'],
+        ]);
+        $notif = $db->query("INSERT INTO notifications (title, message, status, applicant_id, type, `for`) VALUES (:title, :message, :status, :applicant_id, :type, :for)", [
+            ':title' => 'new application',
+            ':message' => 'Dear Hr, You have a new Applicant',
+            ':status' => 'unread',
+            ':applicant_id' => $applicant_id,
+            ':type' => 'application',
+            ':for' => 'hr',
+        ]);
+        $success = true;
+        header('Location: /application');
+        exit();
+    }
+}
+
+require 'views/job-application.view.php';
