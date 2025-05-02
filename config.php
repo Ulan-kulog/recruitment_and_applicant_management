@@ -12,4 +12,10 @@ return [
         'dbname' => 'hr_ram', //3206_DB
         'charset' => 'utf8mb4',
     ],
+    'usm' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'dbname' => 'sub_user_management',
+        'charset' => 'utf8mb4',
+    ],
 ];

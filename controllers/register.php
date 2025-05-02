@@ -4,6 +4,7 @@ session_start();
 $heading = 'HOME';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $users = $db->query('SELECT username,email FROM user_accounts')->fetchAll();
@@ -23,13 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($users as $user) {
         if ($user['username'] == $_POST['username']) {
             $errors['username'] = 'username already taken.';
-            // dd($errors);
         } elseif ($user['email'] == $_POST['email']) {
             $errors['email'] = 'email already taken.';
-            // dd($errors);
         }
     }
-    // dd($_POST);
     if (empty($errors)) {
         if ($email && $password && $username) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
