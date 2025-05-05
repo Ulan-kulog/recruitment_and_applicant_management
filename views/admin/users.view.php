@@ -85,15 +85,7 @@
                                 <th class="user_id border-r border-t"><?= htmlspecialchars($user['user_id'] ?? '')  ?></th>
                                 <td class="username border-r border-t"><?= htmlspecialchars($user['username'] ?? '')  ?></td>
                                 <td class="email border-r border-t"><?= htmlspecialchars($user['email'] ?? '')  ?></td>
-                                <?php if ($user['role'] == 1) : ?>
-                                    <td class="role border-r border-t">Admin</td>
-                                <?php elseif ($user['role'] == 2) : ?>
-                                    <td class="role border-r border-t">HR</td>
-                                <?php elseif ($user['role'] == 3) : ?>
-                                    <td class="role border-r border-t">User</td>
-                                <?php else : ?>
-                                    <td class="role border-r border-t">Hiring Manager</td>
-                                <?php endif ?>
+                                <td class="role border-r border-t"><?= htmlspecialchars($user['role']) ?></td>
                                 <td class="border-r border-t"><?= htmlspecialchars($user['register_type'] ?? '')  ?></td>
                                 <td class="border-r border-t"><?= htmlspecialchars($user['created_at'] ?? '')  ?></td>
                                 <td class="border-t">
@@ -125,10 +117,10 @@
                                                     <label for="role">Role</label>
                                                     <select class="select" name="role" id="role">
                                                         <option disabled selected>Choose an option:</option>
-                                                        <option value="2">Admin</option>
-                                                        <option value="3">Manager</option>
-                                                        <option value="4">HR</option>
-                                                        <option value="5">Hiring manager</option>
+                                                        <option value="admin">Admin</option>
+                                                        <option value="manager">Manager</option>
+                                                        <option value="recruiter">Recruiter</option>
+                                                        <option value="hiring manager">Hiring manager</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-span-2 text-end">
@@ -231,7 +223,6 @@
             document.getElementById('username').value = username;
             document.getElementById('role').value = role;
             document.getElementById('id').value = idDelete;
-            console.log(username);
         })
     })
 </script>

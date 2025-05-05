@@ -63,7 +63,7 @@ $notifications = $db->query('SELECT
                 <?php endforeach ?>
             </button>
             <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-auto dark:bg-gray-700">
-                <div class="text-white px-2 py-1">
+                <div class="text-black px-2 py-1">
                     <p>Mark as Read</p>
                 </div>
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
@@ -79,8 +79,12 @@ $notifications = $db->query('SELECT
                                         <div class="ms-3 font-semibold">
                                             Read
                                         </div>
+                                    <?php else : ?>
+                                        <div class="ms-3">
+                                            Unread
+                                        </div>
                                     <?php endif ?>
-                                    <a href="/hr/applicant-notification?id=<?= $notification['id'] ?>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white  <?= $notification['status'] == 'unread' ? 'text-white font-semibold' : '' ?>"><?= $notification['message'] ?></a>
+                                    <a href="/hr/applicant-notification?id=<?= $notification['id'] ?>" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-black text-black  <?= $notification['status'] == 'unread' ? 'text-white font-semibold' : '' ?>"><?= $notification['message'] ?></a>
                                 </div>
                             </li>
                         <?php endforeach ?>

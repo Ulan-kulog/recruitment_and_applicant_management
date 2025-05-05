@@ -4,6 +4,7 @@ session_start();
 
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
 $client = new Google\Client();
 $client->setClientId($config['google']['client_id']);
@@ -12,7 +13,8 @@ $client->setRedirectUri($config['google']['redirect_uri']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['login'] ?? '' == true) {
-        $email = $_POST['email'];
+
+        $email = trim($_POST['email']);
         $password = $_POST['password'];
         $errors = [];
 
@@ -24,44 +26,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
         try {
-            $user = $db->query('SELECT * FROM user_accounts WHERE email = :email', [
+            $user = $usm->query('SELECT * FROM user_account WHERE email = :email', [
                 ':email' => $email,
             ])->fetch();
+            // dd($user);
 
-            if ($user === false) {
-                $errors['email'] = 'Email not found';
+            if (!$user) {
+                $errors['email'] = 'Email or password is incorrect';
             } elseif (!password_verify($password, $user['password'])) {
                 $errors['password'] = 'Password is incorrect';
             }
             if (empty($errors) && $user) {
-                if ($user['role'] === 2) {
+                if ($user['role'] === 'admin') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = 'ADMIN';
+                    $_SESSION['role'] = $user['role'];
                     header("Location: /admin/");
                     exit();
-                } elseif ($user['role'] === 3) {
+                } elseif ($user['role'] === 'manager') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['role'] = 'Manager';
                     header('Location: /manager/');
                     exit();
-                } elseif ($user['role'] === 4) {
+                } elseif ($user['role'] === 'recruiter') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = 'HR';
+                    $_SESSION['role'] = $user['role'];
                     header("Location: /hr/");
                     exit();
-                } elseif ($user['role'] === 5) {
+                } elseif ($user['role'] === 'hiring manager') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = 'Hiring Manager';
+                    $_SESSION['role'] = $user['role'];
                     header('Location: /hr_hiring/');
                     exit();
-                } elseif ($user['role'] === 6) {
+                } elseif ($user['role'] === 'applicant') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = 'User';
+                    $_SESSION['role'] = $user['role'];
                     header('Location: /home');
                     exit();
                 }

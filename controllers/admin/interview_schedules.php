@@ -5,14 +5,11 @@ $heading = 'Interview Schedules';
 $config = require 'config.php';
 $db = new Database($config['database']);
 
-$uri = $GLOBALS['uri'];
-$parts = explode('/', $uri);
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
     if ($_POST['delete'] ?? '' == true) {
         $db->query("DELETE FROM interviewschedules WHERE schedule_id = :schedule_id", [
-            ':schedule_id' => $_POST['schedule_id'],
+            ':schedule_id' => $_POST['id'],
         ]);
     }
     validate('date', $errors);
