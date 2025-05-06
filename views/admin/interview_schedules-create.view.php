@@ -56,7 +56,7 @@
                     </div>
                     <div class="flex flex-col gap-2 ">
                         <label for="mode">mode</label>
-                        <select name="mode" id="mode" class="select text-center">
+                        <select name="mode" id="mode" class="select text-center" required>
                             <option selected disabled>Choose an option:</option>
                             <option value="In-Person">In-Person</option>
                             <option value="Online">Online</option>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="interview_type">interview type</label>
-                        <select name="interview_type" id="interview_type" class="select text-center">
+                        <select name="interview_type" id="interview_type" class="select text-center" required>
                             <option selected disabled>Choose an option:</option>
                             <option value="initial">initial</option>
                             <option value="final">final</option>
@@ -78,7 +78,7 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="interview_status">interview status</label>
-                        <select name="interview_status" id="interview_status" class="select text-center">
+                        <select name="interview_status" id="interview_status" class="select text-center" required>
                             <option selected disabled>Choose an option:</option>
                             <option value="ongoing">ongoing</option>
                             <option value="done">done</option>
@@ -89,7 +89,7 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label for="applicant_id">applicant_id</label>
-                        <select name="applicant_id" id="applicant_id" class="select text-center">
+                        <select name="applicant_id" id="applicant_id" class="select text-center" required>
                             <option selected disabled>Choose an option</option>
                             <?php foreach ($applicants as $applicant) : ?>
                                 <option value="<?= htmlspecialchars($applicant['applicant_id']) ?>"><?= 'ID ' . htmlspecialchars($applicant['applicant_id']) . ': ' . $applicant['first_name'] . ' ' . htmlspecialchars($applicant['last_name']) ?></option>
@@ -103,7 +103,7 @@
                         <input type="hidden" value="<?= $_SESSION['user_id'] ?>" name="interviewer_id" id="interviewer_id">
                     </div>
                     <div class="col-span-2 flex flex-col gap-2 my-5">
-                        <button type="submit" class="btn border border-[#594423] hover:bg-[#594423] tracking-wider hover:text-white transition duration-300">
+                        <button type="button" id="create_interview" class="btn border border-[#594423] hover:bg-[#594423] tracking-wider hover:text-white transition duration-300">
                             create interview schedule
                         </button>
                     </div>
@@ -116,4 +116,31 @@
 </div>
 </div>
 
+<script>
+    $('document').ready(function() {
+        $('#create_interview').click(function() {
+            let isValid = true
+            $('input[required], select[required]').each(function() {
+                if ($(this).val() == '') {
+                    isValid = false;
+                    $(this).addClass('border-red-500');
+                    $(this).removeClass('border-[#594423]');
+                } else {
+                    $(this).removeClass('border-red-500');
+                    $(this).addClass('border-[#594423]');
+                }
+            });
+            if ($('input[required].border-red-500').length == 0) {
+                // $('form').submit();
+            } else {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill out all required fields.',
+                    timer: 1500,
+                });
+            }
+        });
+    })
+</script>
 <?php require 'partials/admin/footer.php' ?>

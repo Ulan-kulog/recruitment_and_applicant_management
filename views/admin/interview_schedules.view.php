@@ -6,10 +6,16 @@
     <div class="main w-full bg-[#FFF6E8] md:ml-[320px]">
         <?php require 'partials/admin/navbar.php' ?>
         <main class="px-8 py-8">
-            <?php if ($success ?? '' == true) : ?>
-                <div role="alert" class="alert alert-info mb-5">
+            <?php if ($updated ?? '' === true) : ?>
+                <div role="alert" class="alert alert-success mb-5">
                     <box-icon name='check-circle'></box-icon>
                     <span>Interview schedule Updated successfully.</span>
+                </div>
+            <?php endif ?>
+            <?php if ($deleted ?? '' === true) : ?>
+                <div role="alert" class="alert alert-success mb-5">
+                    <box-icon name='check-circle'></box-icon>
+                    <span>Interview schedule Deleted.</span>
                 </div>
             <?php endif ?>
             <div>

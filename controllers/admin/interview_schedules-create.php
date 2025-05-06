@@ -4,7 +4,6 @@ $heading = 'Interview Schedules Create';
 $config = require 'config.php';
 $db = new Database($config['database']);
 
-
 $applicants = $db->query("
     SELECT a.applicant_id, a.first_name, a.last_name
     FROM applicants a
@@ -26,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = true;
     }
     if (empty($errors)) {
-        // dd($_POST);
         $db->query("INSERT INTO interviewschedules (date, time, location, mode, interview_type, interview_status, applicant_id, interviewer_id)
                 VALUES (:date, :time, :location, :mode, :interview_type, :interview_status, :applicant_id, :interviewer_id)
             ", [
@@ -38,6 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'interview_status' => $_POST['interview_status'],
             'applicant_id' => $_POST['applicant_id'],
             'interviewer_id' => $_POST['interviewer_id']
+        ]);
+        $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+            ':department_id' => 1,
+            ':user_id' => $_SESSION['user_id'],
+            ':action' => 'delete',
+            ':description' => "admin: " . $_SESSION['username'] . ' Deleted an applicant with the applicant ID: ' . $_POST['applicant_id'],
+            ':department_affected' => 'HR part 1&2',
+            ':module_affected' => 'recruitment and applicant management',
         ]);
         $success = true;
     }
