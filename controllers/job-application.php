@@ -3,9 +3,10 @@
 session_start();
 
 $config = require 'config.php';
-$db = new Database($config['database']);
 $heading = 'JOB-APPLICATION';
-
+$db = new Database($config['database']);
+$usm = new Database($config['usm']);
+// dd($_SESSION);
 $applications = $db->query("SELECT
  applicants.*,
  applicationstatus.status
@@ -15,10 +16,10 @@ $applications = $db->query("SELECT
     ':user_id' => $_SESSION['user_id']
 ])->fetchAll();
 
-$user_info = $db->query("SELECT first_name, last_name, email FROM user_accounts WHERE user_id = :user_id", [
+$user_info = $usm->query("SELECT first_name, last_name, email FROM user_account WHERE user_id = :user_id", [
     ':user_id' => $_SESSION['user_id']
 ])->fetch();
-// dd($user_email);
+// dd($user_info);
 if (count($applications) >= 1) {
     $currentApplication;
     foreach ($applications as $application) {
@@ -127,7 +128,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':type' => 'application',
             ':for' => 'hr',
         ]);
-        $success = true;
+        $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description) VALUES (:department_id, :user_id, :transaction_type, :description)", [
+            "department_id" => 1,
+            "user_id" => $_SESSION['user_id'],
+            "transaction_type" => 'application submission',
+            "description" => 'UserID: ' . $_SESSION['user_id'] . ' Submitted an application for:' . $recruiter['job_title'],
+        ]);
+
         header('Location: /application');
         exit();
     }

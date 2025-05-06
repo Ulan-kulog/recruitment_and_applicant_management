@@ -1,14 +1,5 @@
 <?php require 'partials/head.php' ?>
 <?php require 'partials/navbar.php' ?>
-<?php if ($success == true) : ?>
-    <div role="alert" class="alert alert-success">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <p>Application Submitted!</p>
-        <a href="/application" class="hover:underline font-bold">Go to applications tab</a>
-    </div>
-<?php endif ?>
 <div class="my-5">
     <a href="/home" class="text-blue-500 hover:text-blue-600 hover:underline mx-5 flex items-center"><box-icon name='left-arrow-alt'></box-icon>Back to jobpostings</a>
 </div>
@@ -76,7 +67,7 @@
 
             <div>
                 <label class="block text-[#4E3B2A] text-md">Email</label>
-                <input type="email" name="email" value="<?= htmlspecialchars($user_info['email']) ?>" placeholder="juanDelaCruz@gmail.com"
+                <input type="email" name="email" value="<?= htmlspecialchars($user_info['email'] ?? '') ?>" placeholder="juanDelaCruz@gmail.com"
                     class="w-full max-w-md px-4 py-2 mt-2 border border-gray-300 rounded-lg focus:ring focus:ring-[#594423] focus:outline-none" readonly>
                 <?php if ($errors['email'] ?? '') : ?>
                     <p class="w-full max-w-md text-red-500">
