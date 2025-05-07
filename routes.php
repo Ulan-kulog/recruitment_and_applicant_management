@@ -61,6 +61,7 @@ return [
     '/admin/job-offers' => 'controllers/admin/job-offers.php',
     '/admin/job-offer-view' => 'controllers/admin/job-offer-view.php',
     '/admin/users' => 'controllers/admin/users.php',
+    '/admin/user-update' => 'controllers/admin/user-update.php',
     '/admin/interview_schedules' => 'controllers/admin/interview_schedules.php',
     '/admin/interview_schedules-create' => 'controllers/admin/interview_schedules-create.php',
 ];

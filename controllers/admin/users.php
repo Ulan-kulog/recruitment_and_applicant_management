@@ -40,11 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ':role' => $_POST['role'],
                             ':register_type' => 'created by admin',
                         ]);
+                        $id = $usm->pdo->lastInsertId();
                         $usm->query("INSERT INTO department_audit_trail(department_id,user_id,action,description,department_affected,module_affected) VALUES (:department_id,:user_id,:action,:description,:department_affected,:module_affected)", [
                             ':department_id' => 1,
                             ':user_id' => $_SESSION['user_id'],
                             ':action' => 'create',
-                            ':description' => 'Created a new user account',
+                            ':description' => "admin: {$_SESSION['username']} just created a new user account with the user ID: {$id}",
                             ':department_affected' => 'HR part 1&2',
                             ':module_affected' => 'recruitment and applicant management',
                         ]);
@@ -52,43 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             } catch (Exception $e) {
                 $error = $e->getMessage();
-            }
-        }
-    }
-    if ($_POST['update'] ?? '' == true) {
-        try {
-            validate('username', $errors);
-            validate('email', $errors);
-            validate('role', $errors);
-
-            if (!empty($errors)) {
-                dd($errors);
-                throw new Exception('Validation failed: Please check the entered information and try again.');
-            }
-        } catch (Exception $e) {
-            $error = 'Error: ' . $e->getMessage();
-        }
-        if (empty($errors)) {
-            try {
-                $usm->query("UPDATE user_account SET username = :username, email = :email, role = :role WHERE user_id = :user_id", [
-                    ':username' => trim($_POST['username']),
-                    ':email' => rtrim($_POST['email']),
-                    ':role' => $_POST['role'],
-                    ':user_id' => $_POST['user_id'],
-                ]);
-                $usm->query("INSERT INTO department_audit_trail(department_id,user_id,action,description,department_affected,module_affected) VALUES (:department_id,:user_id,:action,:description,:department_affected,:module_affected)", [
-                    ':department_id' => 1,
-                    ':user_id' => $_SESSION['user_id'],
-                    ':action' => 'update',
-                    ':description' => 'Updated user account with the user ID: ' . $_POST['user_id'],
-                    ':department_affected' => 'HR part 1&2',
-                    ':module_affected' => 'recruitment and applicant management',
-                ]);
-                $updated = true;
-            } catch (PDOException $e) {
-                if ($e->getCode() == 23000) {
-                    $error = 'Error: The action could not be completed due to a data validation problem. Please ensure all related data is correct.';
-                }
             }
         }
     }
@@ -102,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':department_id' => 1,
                 ':user_id' => $_SESSION['user_id'],
                 ':action' => 'delete',
-                ':description' => 'Deleted user account with the user ID: ' . $_POST['id'],
+                ':description' => "admin: {$_SESSION['username']} Deleted a user account with the user ID: {$_POST['id']}",
                 ':department_affected' => 'HR part 1&2',
                 ':module_affected' => 'recruitment and applicant management',
             ]);

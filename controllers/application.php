@@ -3,8 +3,8 @@ session_start();
 $heading = 'MY APPLICATIONS';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
-//unfinished
 $rejectApplication = isset($_SESSION['unfinished_application']) && $_SESSION['unfinished_application'] === true;
 unset($_SESSION['unfinished_application']);
 $hiredApplication = isset($_SESSION['already_hired']) && $_SESSION['already_hired'] === true;
@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $pagibig = $_POST['old_pagibig'];
 
   if (isset($_FILES['resume']) && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
-    // dd($_FILES['resume']);
     $uploadDir = 'uploads/documents/';
     $resume =  $_SESSION['user_id'] . '_alt_' . time() . '_' . basename($_FILES['resume']['name']);
     $resumefile = $uploadDir . $resume;
@@ -90,6 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':applicant_id' => $_POST['applicant_id'],
       ]);
     }
+    $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+      ':department_id' => 1,
+      ':user_id' => $_SESSION['user_id'],
+      ':action' => 'Update',
+      ':description' => 'Updated application with ID: ' . $_POST['applicant_id'],
+      ':department_affected' => 'HR part 1&2',
+      ':module_affected' => 'recruitment and applicant management'
+    ]);
+
     $updated = true;
   }
 }

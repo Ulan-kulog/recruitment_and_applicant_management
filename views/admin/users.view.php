@@ -89,51 +89,7 @@
                                 <td class="border-r border-t"><?= htmlspecialchars($user['register_type'] ?? '')  ?></td>
                                 <td class="border-r border-t"><?= htmlspecialchars($user['created_at'] ?? '')  ?></td>
                                 <td class="border-t">
-                                    <button data-id="<?= htmlspecialchars($user['user_id']) ?>" class="openModal btn btn-primary my-2" onclick="my_modal_5.showModal()">Update</button>
-                                    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-                                        <div class="modal-box">
-                                            <form method="dialog">
-                                                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                            </form>
-                                            <h3 class="text-lg font-bold">Update record</h3>
-                                            <hr class="my-4">
-                                            <form method="post" class="grid grid-cols-2 gap-2">
-                                                <input type="hidden" name="update" value="true">
-                                                <input type="hidden" name="user_id" id="user_id">
-                                                <div class=" my-4 col-span-1">
-                                                    <label for="username">Username</label>
-                                                    <input type="text" placeholder="Type here" name="username" class="input" id="username" />
-                                                    <?php if (isset($errors['username'])): ?>
-                                                        <div class="validator hint">
-                                                            <?= $errors['username'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class="my-4 col-span-1">
-                                                    <label for="Email">Email</label>
-                                                    <input type="email" placeholder="Type here" name="email" class="input" id="email" />
-                                                </div>
-                                                <div class="my-4 col-span-2">
-                                                    <label for="role">Role</label>
-                                                    <select class="select" name="role" id="role">
-                                                        <option disabled selected>Choose an option:</option>
-                                                        <option value="admin">Admin</option>
-                                                        <option value="manager">Manager</option>
-                                                        <option value="recruiter">Recruiter</option>
-                                                        <option value="hiring manager">Hiring manager</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-span-2 text-end">
-                                                    <div>
-                                                        <button type="submit" class="btn btn-primary">Update</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <form method="dialog" class="modal-backdrop">
-                                            <button>close</button>
-                                        </form>
-                                    </dialog>
+                                    <a href="/admin/user-update?id=<?= htmlspecialchars($user['user_id']) ?>" class="openModal btn btn-primary my-2">Update</a>
                                     <button data-id="<?= $user['user_id'] ?>" class="openModal btn btn-error my-2" onclick="my_modal_3.showModal()">Delete</button>
                                     <dialog id="my_modal_3" class="modal modal-bottom sm:modal-middle">
                                         <div class="modal-box">
@@ -212,16 +168,7 @@
     document.querySelectorAll('.openModal').forEach(button => {
         button.addEventListener('click', () => {
             let row = event.target.closest('tr');
-            let user_id = row.querySelector('.user_id').textContent;
-            let email = row.querySelector('.email').textContent;
-            let username = row.querySelector('.username').textContent;
-            let role = row.querySelector('.role').textContent;
             let idDelete = row.querySelector('.user_id').textContent;
-
-            document.getElementById('user_id').value = user_id;
-            document.getElementById('email').value = email;
-            document.getElementById('username').value = username;
-            document.getElementById('role').value = role;
             document.getElementById('id').value = idDelete;
         })
     })
