@@ -56,6 +56,7 @@ return [
     '/admin/' => 'controllers/admin/index.php',
     '/admin/applicants' => 'controllers/admin/applicants.php',
     '/admin/applicant' => 'controllers/admin/applicant.php',
+    '/admin/applicant-update' => 'controllers/admin/applicant-update.php',
     '/admin/jobs' => 'controllers/admin/jobs.php',
     '/admin/job' => 'controllers/admin/job.php',
     '/admin/job-offers' => 'controllers/admin/job-offers.php',

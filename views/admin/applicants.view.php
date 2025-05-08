@@ -99,82 +99,7 @@
                                 <td class="created_at border-t"><?= htmlspecialchars($applicant['created_at']) ?></td>
                                 <td class="border-t">
                                     <a href="/admin/applicant?id=<?= htmlspecialchars($applicant['applicant_id']) ?>" class="btn border border-black"><i class="fa-solid fa-eye"></i></a>
-                                    <button data-id="<?= $user['user_id'] ?>" class="openModal btn btn-primary my-2" onclick="my_modal_5.showModal()"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-                                        <div class="modal-box max-w-3xl">
-                                            <form method="dialog">
-                                                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                            </form>
-                                            <h3 class="text-lg font-semibold">Update Record</h3>
-                                            <hr class="my-4">
-                                            <form method="post" class="grid grid-cols-2 gap-2">
-                                                <input type="hidden" name="update" value="true">
-                                                <input type="hidden" name="applicant_id" id="update_id" class="input">
-                                                <div class=" my-4 col-span-1">
-                                                    <label for="first_name">first_name</label>
-                                                    <input type="text" placeholder="Type here" name="first_name" class="input" id="first_name" />
-                                                    <?php if (isset($errors['first_name'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['first_name'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class=" my-4 col-span-1">
-                                                    <label for="last_name">last_name</label>
-                                                    <input type="text" placeholder="Type here" name="last_name" class="input" id="last_name" />
-                                                    <?php if (isset($errors['last_name'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['last_name'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class=" my-4 col-span-1 flex flex-col items-center">
-                                                    <label for="age">Age</label>
-                                                    <input type="number" name="age" class="input" id="age" />
-                                                    <?php if (isset($errors['age'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['age'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class=" my-4 col-span-1">
-                                                    <label for="date_of_birth">Date of Birth</label>
-                                                    <input type="date" name="date_of_birth" class="input" id="date_of_birth" />
-                                                    <?php if (isset($errors['date_of_birth'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['date_of_birth'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class=" my-4 col-span-1">
-                                                    <label for="contact_number">Contact number</label>
-                                                    <input type="tel" placeholder="Type here" name="contact_number" class="input" id="contact_number" />
-                                                    <?php if (isset($errors['contact_number'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['contact_number'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class="my-4 col-span-1 flex flex-col items-center">
-                                                    <label for="email">Email</label>
-                                                    <input type="email" placeholder="Type here" name="email" class="input" id="email" />
-                                                    <?php if (isset($errors['email'])): ?>
-                                                        <div class="text-red-400 text-xs">
-                                                            <?= $errors['email'] ?>
-                                                        </div>
-                                                    <?php endif ?>
-                                                </div>
-                                                <div class="col-span-2 text-end">
-                                                    <div>
-                                                        <button type="submit" class="btn btn-primary">Update</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <form method="dialog" class="modal-backdrop">
-                                            <button>close</button>
-                                        </form>
-                                    </dialog>
+                                    <a href="/admin/applicant-update?id=<?= htmlspecialchars($applicant['applicant_id']) ?>" class="openModal btn btn-primary my-2"><i class="fa-solid fa-pen-to-square"></i></a>
                                     <button data-id="<?= $user['user_id'] ?>" class="deleteModal btn btn-error my-2" onclick="my_modal_3.showModal()"><i class="fa-solid fa-trash"></i></button>
                                     <dialog id="my_modal_3" class="modal modal-bottom sm:modal-middle">
                                         <div class="modal-box">
@@ -214,27 +139,6 @@
             const row = event.target.closest('tr');
             const idValue = row.querySelector('.applicant_id').textContent;
             document.getElementById('delete_id').value = idValue;
-        });
-    });
-
-    document.querySelectorAll('.openModal').forEach((button) => {
-        button.addEventListener('click', (event) => {
-            const row = event.target.closest('tr');
-            const idValue = row.querySelector('.applicant_id').textContent;
-            const first_name = row.querySelector('.first_name').textContent;
-            const last_name = row.querySelector('.last_name').textContent;
-            const age = row.querySelector('.age').textContent;
-            const date_of_birth = row.querySelector('.date_of_birth').textContent;
-            const contact_number = row.querySelector('.contact_number').textContent;
-            const email = row.querySelector('.email').textContent;
-
-            document.getElementById('update_id').value = idValue;
-            document.getElementById('first_name').value = first_name;
-            document.getElementById('last_name').value = last_name;
-            document.getElementById('age').value = age;
-            document.getElementById('date_of_birth').value = date_of_birth;
-            document.getElementById('contact_number').value = contact_number;
-            document.getElementById('email').value = email;
         });
     });
 </script>
