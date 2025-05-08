@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':department_id' => 1,
             ':user_id' => $_SESSION['user_id'],
             ':action' => 'delete',
-            ':description' => "admin: " . $_SESSION['username'] . ' Deleted an applicant with the applicant ID: ' . $_POST['applicant_id'],
+            ':description' => "admin: {$_SESSION['username']} Deleted an applicant with the applicant ID: {$_POST['applicant_id']}",
             ':department_affected' => 'HR part 1&2',
             ':module_affected' => 'recruitment and applicant management',
         ]);
@@ -43,5 +43,4 @@ FROM applicants a inner join applicationstatus s on a.applicant_id = s.applicant
 WHERE s.status = 'hired'
 ORDER BY created_at DESC 
 ")->fetchAll();
-// dd($newhires);
 require 'views/admin/applicants.view.php';
