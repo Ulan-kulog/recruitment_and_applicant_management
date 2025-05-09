@@ -117,7 +117,7 @@
 </div>
 
 <script>
-    $('document').ready(function() {
+    $(document).ready(function() {
         $('#create_interview').click(function() {
             let isValid = true
             $('input[required], select[required]').each(function() {
@@ -130,8 +130,8 @@
                     $(this).addClass('border-[#594423]');
                 }
             });
-            if ($('input[required].border-red-500').length == 0) {
-                // $('form').submit();
+            if (isValid) {
+                $('form').submit();
             } else {
                 swal.fire({
                     icon: 'error',
