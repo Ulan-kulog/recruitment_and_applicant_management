@@ -4,8 +4,8 @@ session_start();
 $heading = 'Job Postings';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
-// dd($_SESSION);
 $errors = [];
 $success = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -31,6 +31,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':posting_id' => $job_id,
                 ':description' => $_POST['description'],
                 ':requirements' => $_POST['requirements'],
+            ]);
+            $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+                ':department_id' => $_POST['department_id'],
+                ':user_id' => $_POST['user_id'],
+                ':action' => 'create',
+                ':description' => "admin: {$_SESSION['username']} created a new job posting",
+                ':department_affected' => 'hr',
+                ':module_affected' => 'job postings',
+            ]);
+            $usm->query("INSERT INTO department_audit_trail (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
+                ':department_id' => $_POST['department_id'],
+                ':user_id' => $_POST['user_id'],
+                ':transaction_type' => 'job posting creation',
+                ':description' => "admin: {$_SESSION['username']} created a new job posting. Position: {$_POST['job_title']}, Location: {$_POST['location']}",
+                ':department_affected' => 'hr',
+                ':module_affected' => 'job postings',
             ]);
             $success = true;
         }
