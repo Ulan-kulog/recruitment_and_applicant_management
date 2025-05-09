@@ -13,7 +13,6 @@ $applicants = $db->query("
 
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    dd($_POST);
     validate('date', $errors);
     validate('time', $errors);
     validate('location', $errors);

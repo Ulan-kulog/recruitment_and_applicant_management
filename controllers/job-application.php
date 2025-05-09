@@ -6,7 +6,7 @@ $config = require 'config.php';
 $heading = 'JOB-APPLICATION';
 $db = new Database($config['database']);
 $usm = new Database($config['usm']);
-// dd($_SESSION);
+
 $applications = $db->query("SELECT
  applicants.*,
  applicationstatus.status
@@ -128,11 +128,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':type' => 'application',
             ':for' => 'hr',
         ]);
-        $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description) VALUES (:department_id, :user_id, :transaction_type, :description)", [
+
+        $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
             "department_id" => 1,
             "user_id" => $_SESSION['user_id'],
             "transaction_type" => 'application submission',
-            "description" => 'UserID: ' . $_SESSION['user_id'] . ' Submitted an application for:' . $recruiter['job_title'],
+            "description" => "UserID: {$_SESSION['user_id']} Submitted an application for job: {$recruiter['job_title']}",
+            "department_affected" => 'HR part 1&2',
+            "module_affected" => 'recruitment and applicant management',
+        ]);
+
+        $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+            "department_id" => 1,
+            "user_id" => $_SESSION['user_id'],
+            "action" => 'create',
+            "description" => "UserID: {$_SESSION['user_id']} added an application for job: {$recruiter['job_title']}",
+            "department_affected" => 'HR part 1&2',
+            "module_affected" => 'recruitment and applicant management',
         ]);
 
         header('Location: /application');
