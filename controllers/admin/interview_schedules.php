@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':department_id' => 1,
                 ':user_id' => $_SESSION['user_id'],
                 ':action' => 'update',
-                ':description' => 'Updated interview schedule with the schedule ID: ' . $_POST['schedule_id'] . " for applicant: " . $_POST['first_name'],
+                ':description' => "Updated interview schedule with the schedule ID: {$_POST['schedule_id']} for applicant: {$_POST['first_name']}",
                 ':department_affected' => 'HR part 1&2',
                 ':module_affected' => 'recruitment and applicant management',
             ]);
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':department_id' => 1,
             ':user_id' => $_SESSION['user_id'],
             ':action' => 'delete',
-            ':description' => "admin: " . $_SESSION['username'] . ' Deleted an applicant with the applicant ID: ' . $_POST['applicant_id'],
+            ':description' => "admin: {$_SESSION['username']} Deleted an applicant with the applicant ID: {$_POST['applicant_id']}",
             ':department_affected' => 'HR part 1&2',
             ':module_affected' => 'recruitment and applicant management',
         ]);
@@ -62,6 +62,5 @@ FROM interviewschedules s INNER JOIN applicants a on s.applicant_id = a.applican
 INNER JOIN user_accounts i on i.user_id = s.interviewer_id
 ORDER BY created_at DESC
 ")->fetchAll();
-// dd($schedules);
 
 require 'views/admin/interview_schedules.view.php';
