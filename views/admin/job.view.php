@@ -7,33 +7,20 @@
     <div class="main w-full bg-[#FFF6E8] md:ml-[320px] transition-all duration-300">
         <?php require 'partials/admin/navbar.php' ?>
         <main class="px-4 py-10 flex flex-col items-center">
-            <?php if (count($errors) >= 1) : ?>
-                <div role="alert" class="alert alert-error mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                        <p>Error!</p>
-                        <div>
-                            <ul class="list-disc pl-5">
-                                <li><?= $errors['job_title'] ?? '' ?></li>
-                                <li><?= $errors['company'] ?? '' ?></li>
-                                <li><?= $errors['description'] ?? '' ?></li>
-                                <li><?= $errors['location'] ?? '' ?></li>
-                                <li><?= $errors['salary'] ?? '' ?></li>
-                                <li><?= $errors['requirements'] ?? '' ?></li>
-                                <li><?= $errors['employment_type'] ?? '' ?></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            <?php endif ?>
             <?php if ($success ?? '' == true) : ?>
-                <div role="alert" class="alert alert-success mb-4">
+                <div role="alert" class="alert alert-success mb-4 w-full">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span>Successfully Updated!</span>
+                </div>
+            <?php endif ?>
+            <?php if ($error ?? '' == true) : ?>
+                <div role="alert" class="alert alert-success mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span><?= $errors ?></span>
                 </div>
             <?php endif ?>
             <div class="w-full max-w-3xl p-6 rounded-lg shadow-lg bg-white border border-[#594423]">
@@ -56,24 +43,22 @@
                     </div>
                     <div class="mt-4 md:mt-0 text-center flex flex-col md:flex-row items-center">
                         <button class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white mx-1" onclick="my_modal_2.showModal()"><box-icon name='edit'></box-icon></button>
-                        <form action="" method="post" class="text-center p-1">
+                        <form method="post" class="text-center p-1">
                             <input type="hidden" name="id" value="<?= $_GET['id'] ?>">
                             <input type="hidden" name="delete" value="true">
-                            <button type="submit" class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white"><box-icon name='trash'></box-icon></button>
+                            <button type="button" id="deleteBtn" class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white"><box-icon name='trash'></box-icon></button>
                         </form>
-                        <!-- </div> -->
                         <dialog id="my_modal_2" class="modal">
-                            <div class="modal-box w-11/12 max-w-3xl bg-[#FFF6E8]">
+                            <div class="modal-box w-11/12 max-w-3xl">
                                 <h3 class="text-lg font-bold">Edit Job details</h3>
                                 <form method="dialog">
                                     <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                 </form>
                                 <hr class="my-4">
-                                <form method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4 font-normal">
+                                <form method="post" id="updateForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 font-normal">
                                     <div>
                                         <p>Job Title</p>
                                         <input class="input validator w-full mt-2" name="job_title" value="<?= $job['job_title'] ?>" type="text" required placeholder="Job Title" />
-                                        <div class="validator-hint">Empty Job title field</div>
                                         <?php if ($errors['job_title'] ?? '') : ?>
                                             <p class="text-red-500 text-xs"><?= $errors['job_title'] ?></p>
                                         <?php endif ?>
@@ -81,7 +66,6 @@
                                     <div>
                                         <p>Company</p>
                                         <input class="input validator w-full mt-2" name="company" value="<?= $job['company'] ?>" type="text" required placeholder="company" />
-                                        <div class="validator-hint">Empty company field</div>
                                         <?php if ($errors['company'] ?? '') : ?>
                                             <p class="text-red-500 text-xs"><?= $errors['company'] ?></p>
                                         <?php endif ?>
@@ -89,7 +73,7 @@
                                     <div class="md:col-span-2">
                                         <fieldset class="border rounded p-2">
                                             <legend class="text-sm px-2">Description</legend>
-                                            <textarea class="textarea h-24 w-full" name="description" placeholder="Description..."><?= $job['description'] ?></textarea>
+                                            <textarea class="textarea h-24 w-full" name="description" placeholder="Description..." required><?= $job['description'] ?></textarea>
                                             <?php if ($errors['description'] ?? '') : ?>
                                                 <p class="text-red-500 text-xs"><?= $errors['description'] ?></p>
                                             <?php endif ?>
@@ -98,7 +82,6 @@
                                     <div>
                                         <p>Location</p>
                                         <input class="input validator w-full mt-2" name="location" value="<?= $job['location'] ?>" type="text" required placeholder="Location" />
-                                        <div class="validator-hint">Empty location field</div>
                                         <?php if ($errors['location'] ?? '') : ?>
                                             <p class="text-red-500 text-xs"><?= $errors['location'] ?></p>
                                         <?php endif ?>
@@ -106,7 +89,6 @@
                                     <div>
                                         <p>Salary</p>
                                         <input class="input validator w-full mt-2" name="salary" value="<?= $job['salary'] ?>" type="text" required placeholder="Salary" />
-                                        <div class="validator-hint">Empty Salary field</div>
                                         <?php if ($errors['salary'] ?? '') : ?>
                                             <p class="text-red-500 text-xs"><?= $errors['salary'] ?></p>
                                         <?php endif ?>
@@ -114,7 +96,7 @@
                                     <div class="md:col-span-2">
                                         <fieldset class="border rounded p-2">
                                             <legend class="text-sm px-2">Requirements</legend>
-                                            <textarea class="textarea h-24 w-full" name="requirements" placeholder="Requirements..."><?= $job['requirements'] ?></textarea>
+                                            <textarea class="textarea h-24 w-full" name="requirements" placeholder="Requirements..." required><?= $job['requirements'] ?></textarea>
                                             <?php if ($errors['requirements'] ?? '') : ?>
                                                 <p class="text-red-500 text-xs"><?= $errors['requirements'] ?></p>
                                             <?php endif ?>
@@ -122,8 +104,8 @@
                                     </div>
                                     <div class="md:col-span-2 flex flex-col items-center">
                                         <p class="my-2">Employment type</p>
-                                        <select class="select w-full" name="employment_type" value="<?= $job['employment_type'] ?>">
-                                            <option></option>
+                                        <select class="select w-full" name="employment_type" required>
+                                            <option selected value="<?= htmlspecialchars($job['employment_type']) ?>"><?= htmlspecialchars($job['employment_type']) ?></option>
                                             <option value="full-time">full-time</option>
                                             <option value="part-time">part-time</option>
                                         </select>
@@ -134,7 +116,7 @@
                                     <hr class="md:col-span-2 my-2">
                                     <div class="md:col-span-2 text-right">
                                         <input type="hidden" name="id" value="<?= $job['posting_id'] ?>">
-                                        <button class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white">Update</button>
+                                        <button type="button" id="updateBtn" class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white">Update</button>
                                     </div>
                                 </form>
                             </div>
@@ -177,5 +159,55 @@
         </main>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#updateBtn').click(function() {
+            let isValid = true;
+            $('input[required], select[required], textarea[required]').each(function() {
+                if ($(this).val() === '') {
+                    $(this).addClass('border-red-500');
+                    isValid = false;
+                } else {
+                    $(this).removeClass('border-red-500');
+                }
+            });
+            if (isValid) {
+                $('#updateForm').submit();
+            } else {
+                swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill in all required fields.',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white'
+                    },
+                    buttonsStyling: false,
+                });
+            }
+        });
+        $('#deleteBtn').click(function() {
+            swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#594423',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!',
+                customClass: {
+                    confirmButton: 'btn me-5 bg-[#ad1414] rounded-lg hover:bg-[#8c0d0d] text-white',
+                    cancelButton: 'btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white'
+                },
+                buttonsStyling: false,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#updateForm').submit();
+                }
+            });
+        });
+    });
+</script>
 
 <?php require 'partials/admin/footer.php' ?>

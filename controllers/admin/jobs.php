@@ -33,20 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ':requirements' => $_POST['requirements'],
             ]);
             $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
-                ':department_id' => $_POST['department_id'],
-                ':user_id' => $_POST['user_id'],
+                ':department_id' => 1,
+                ':user_id' => $_SESSION['user_id'],
                 ':action' => 'create',
                 ':description' => "admin: {$_SESSION['username']} created a new job posting",
-                ':department_affected' => 'hr',
-                ':module_affected' => 'job postings',
+                ':department_affected' => 'HR part 1&2',
+                ':module_affected' => 'recruitement and applicant management',
             ]);
-            $usm->query("INSERT INTO department_audit_trail (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
-                ':department_id' => $_POST['department_id'],
-                ':user_id' => $_POST['user_id'],
+            $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
+                ':department_id' => 1,
+                ':user_id' => $_SESSION['user_id'],
                 ':transaction_type' => 'job posting creation',
                 ':description' => "admin: {$_SESSION['username']} created a new job posting. Position: {$_POST['job_title']}, Location: {$_POST['location']}",
-                ':department_affected' => 'hr',
-                ':module_affected' => 'job postings',
+                ':department_affected' => 'HR part 1&2',
+                ':module_affected' => 'recruitement and applicant management',
             ]);
             $success = true;
         }
