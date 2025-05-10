@@ -15,8 +15,16 @@
                     <span>Successfully Updated!</span>
                 </div>
             <?php endif ?>
+            <?php if ($delete ?? '' == true) : ?>
+                <div role="alert" class="alert alert-success mb-4 w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Job posting sucessfully deleted</span>
+                </div>
+            <?php endif ?>
             <?php if ($error ?? '' == true) : ?>
-                <div role="alert" class="alert alert-success mb-4">
+                <div role="alert" class="alert alert-error mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -43,7 +51,7 @@
                     </div>
                     <div class="mt-4 md:mt-0 text-center flex flex-col md:flex-row items-center">
                         <button class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white mx-1" onclick="my_modal_2.showModal()"><box-icon name='edit'></box-icon></button>
-                        <form method="post" class="text-center p-1">
+                        <form method="post" id="deleteForm" class="text-center p-1">
                             <input type="hidden" name="id" value="<?= $_GET['id'] ?>">
                             <input type="hidden" name="delete" value="true">
                             <button type="button" id="deleteBtn" class="btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white"><box-icon name='trash'></box-icon></button>
@@ -203,7 +211,17 @@
                 buttonsStyling: false,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $('#updateForm').submit();
+                    swal.fire({
+                        title: 'Deleted!',
+                        text: 'Your file has been deleted.',
+                        icon: 'success',
+                        timer: 2000,
+                        customClass: {
+                            confirmButton: 'btn border-[#594423] rounded-lg hover:bg-[#594423] hover:text-white'
+                        },
+                        buttonsStyling: false,
+                    });
+                    $('#deleteForm').submit();
                 }
             });
         });

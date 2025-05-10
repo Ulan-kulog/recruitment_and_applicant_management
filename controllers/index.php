@@ -25,17 +25,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header('location: /');
             exit();
         }
+
         try {
             $user = $usm->query('SELECT * FROM user_account WHERE email = :email', [
                 ':email' => $email,
             ])->fetch();
-            // dd($user);
 
             if (!$user) {
                 $errors['email'] = 'Email or password is incorrect';
             } elseif (!password_verify($password, $user['password'])) {
                 $errors['password'] = 'Password is incorrect';
             }
+
             if (empty($errors) && $user) {
                 if ($user['role'] === 'admin') {
                     $_SESSION['user_id'] = $user['user_id'];
@@ -46,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } elseif ($user['role'] === 'manager') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['role'] = 'Manager';
+                    $_SESSION['role'] = $user['role'];
                     header('Location: /manager/');
                     exit();
                 } elseif ($user['role'] === 'recruiter') {
