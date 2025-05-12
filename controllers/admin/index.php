@@ -46,4 +46,5 @@ $totalNewHireInterviews = $db->query("
     INNER JOIN applicationstatus s ON s.applicant_id = a.applicant_id
     WHERE s.status = 'hired'
 ")->fetchAll();
+// dd($_SESSION);
 require 'views/admin/index.view.php';

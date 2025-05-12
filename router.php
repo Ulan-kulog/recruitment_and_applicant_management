@@ -3,8 +3,6 @@
 $routes = require 'routes.php';
 // this separate the query and path 
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
-// dd($uri);
-
 
 routeToController($uri, $routes);
 
