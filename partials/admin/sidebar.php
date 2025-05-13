@@ -186,15 +186,11 @@
                             class="bx bx-chevron-right text-[18px] font-semibold arrow-icon"></i>
                     </div>
                 </div>
-                <div
-                    id="general-ledger-dropdown"
-                    class="menu-drop hidden flex-col w-full bg-[#F7E6CA] rounded-lg p-4 space-y-2 mt-2">
-                    <ul class="space-y-1">
-                        <li>
-                            <a
-                                href="#"
-                                class="text-sm text-gray-800 hover:text-blue-600 hover:ms-2 duration-300 ease-out pr-5 py-2">EmployeeRecognition</a>
-                        </li>
+                <div id="general-ledger-dropdown" class="menu-drop hidden flex-col w-full bg-[#F7E6CA] rounded-lg p-4 space-y-2 mt-2">
+                    <ul class="space-y-2">
+                        <li><a href="/admin/socreg/finaltemplate/awards?page=awards" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Awards</a></li>
+                        <li><a href="?page=recognitions" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Employee Recognition</a></li>
+                        <li><a href="?page=categories" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Categories</a></li>
                     </ul>
                 </div>
             </div>

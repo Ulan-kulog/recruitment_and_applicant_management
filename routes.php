@@ -65,4 +65,7 @@ return [
     '/admin/user-update' => 'controllers/admin/user-update.php',
     '/admin/interview_schedules' => 'controllers/admin/interview_schedules.php',
     '/admin/interview_schedules-create' => 'controllers/admin/interview_schedules-create.php',
+
+    // SOCIAL RECOGNITION
+    '/admin/socreg/finaltemplate/awards' => 'controllers/social-recognition/awards.php',
 ];

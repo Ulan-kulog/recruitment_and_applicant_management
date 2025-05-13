@@ -38,9 +38,9 @@
             sidebar.classList.toggle("sidebar-expanded");
 
             if (sidebar.classList.contains("sidebar-collapsed")) {
-                main.style.marginLeft = "85px"; // Adjust to your sidebar width when collapsed
+                main.style.marginLeft = "85px";
             } else {
-                main.style.marginLeft = "320px"; // Adjust to your sidebar width when expanded
+                main.style.marginLeft = "320px";
             }
         }
     }
