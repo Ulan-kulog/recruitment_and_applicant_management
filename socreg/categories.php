@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'socreg/config.php';
 
 // Handle add category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
     $sql = "INSERT INTO recognitioncategories (CategoryName, Description) VALUES (?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $categoryName, $description);
-    
+
     if ($stmt->execute()) {
         header("Location: ?page=categories&success=add");
         exit();
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_category'])) {
     $sql = "UPDATE recognitioncategories SET CategoryName = ?, Description = ? WHERE CategoryID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssi", $categoryName, $description, $categoryID);
-    
+
     if ($stmt->execute()) {
         header("Location: ?page=categories&success=update");
         exit();
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_category'])) {
 // Handle delete category
 if (isset($_GET['delete'])) {
     $categoryID = $_GET['delete'];
-    
+
     // Check if category is being used in any awards
     $check_sql = "SELECT COUNT(*) as count FROM awards WHERE CategoryID = ?";
     $check_stmt = $conn->prepare($check_sql);
@@ -54,7 +54,7 @@ if (isset($_GET['delete'])) {
         $sql = "DELETE FROM recognitioncategories WHERE CategoryID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $categoryID);
-        
+
         if ($stmt->execute()) {
             header("Location: ?page=categories&success=delete");
             exit();
@@ -219,14 +219,14 @@ $result = mysqli_query($conn, $sql);
                         <input type="hidden" name="category_id" value="<?php echo $edit_category['CategoryID']; ?>">
                         <div class="mb-3">
                             <label for="edit_category_name" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="edit_category_name" name="category_name" 
+                            <input type="text" class="form-control" id="edit_category_name" name="category_name"
                                 value="<?php echo htmlspecialchars($edit_category['CategoryName'], ENT_QUOTES, 'UTF-8'); ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit_description" class="form-label">Description</label>
-                            <textarea class="form-control" id="edit_description" name="description" rows="3"><?php 
-                                echo htmlspecialchars($edit_category['Description'], ENT_QUOTES, 'UTF-8'); 
-                            ?></textarea>
+                            <textarea class="form-control" id="edit_description" name="description" rows="3"><?php
+                                                                                                                echo htmlspecialchars($edit_category['Description'], ENT_QUOTES, 'UTF-8');
+                                                                                                                ?></textarea>
                         </div>
                         <div class="text-end">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -287,7 +287,7 @@ $result = mysqli_query($conn, $sql);
         // Handle modal close events
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
-            modal.addEventListener('hidden.bs.modal', function () {
+            modal.addEventListener('hidden.bs.modal', function() {
                 // Remove URL parameters when modal is closed
                 const url = new URL(window.location);
                 url.searchParams.delete('view');
@@ -329,9 +329,9 @@ $result = mysqli_query($conn, $sql);
     }
 
     // Initialize Bootstrap tooltips
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     });

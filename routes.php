@@ -68,4 +68,6 @@ return [
 
     // SOCIAL RECOGNITION
     '/admin/socreg/finaltemplate/awards' => 'controllers/social-recognition/awards.php',
+    '/admin/socreg/finaltemplate/recognitions' => 'controllers/social-recognition/recognitions.php',
+    '/admin/socreg/finaltemplate/categories' => 'controllers/social-recognition/categories.php',
 ];

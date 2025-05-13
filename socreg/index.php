@@ -3,14 +3,14 @@ function sanitize_page($page)
 {
     return preg_replace('/[^a-zA-Z0-9_-]/', '', $page);
 }
-
+require 'socreg/config.php';
 $heading = 'Awards';
 require 'partials/admin/head.php';
 ?>
 
 <div class="flex min-h-screen w-full">
     <!-- Overlay -->
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <!-- <div class="sidebar-overlay" id="sidebar-overlay"></div> -->
 
     <!-- Sidebar -->
     <?php require 'partials/admin/sidebar.php' ?>
@@ -89,7 +89,7 @@ require 'partials/admin/head.php';
 </div>
 
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 <!-- <script>
     function toggleDropdown(dropdownId, element) {
         const dropdown = document.getElementById(dropdownId);

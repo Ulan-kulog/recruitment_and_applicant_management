@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once 'socreg/config.php';
 
 // Handle CRUD operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,13 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $notes = $_POST['notes'];
 
         $sql = "INSERT INTO employeerecognition (EmployeeID, AwardID, RecognitionDate, Description) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);               
-        
+        $stmt = $conn->prepare($sql);
+
         if (!$stmt) {
             $error = "Error preparing statement: " . $conn->error;
         } else {
             $stmt->bind_param("iiss", $employeeID, $awardID, $recognitionDate, $notes);
-            
+
             if ($stmt->execute()) {
                 header("Location: ?page=recognitions&success=add");
                 exit();
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "UPDATE employeerecognition SET EmployeeID = ?, AwardID = ?, RecognitionDate = ?, Description = ? WHERE RecognitionID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iissi", $employeeID, $awardID, $recognitionDate, $notes, $recognitionID);
-        
+
         if ($stmt->execute()) {
             header("Location: ?page=recognitions&success=update");
             exit();
@@ -52,7 +52,7 @@ if (isset($_GET['delete'])) {
     $sql = "DELETE FROM employeerecognition WHERE RecognitionID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $recognitionID);
-    
+
     if ($stmt->execute()) {
         header("Location: ?page=recognitions&success=delete");
         exit();
@@ -120,7 +120,7 @@ mysqli_data_seek($awards_result, 0);
 <div class="container-fluid">
     <div class="page-header">
         <h1>Employee Recognitions</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecognitionModal">
+        <button type="button" id="recog-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecognitionModal">
             <i class="bi bi-plus-circle me-2"></i> Add Recognition
         </button>
     </div>
@@ -219,13 +219,13 @@ mysqli_data_seek($awards_result, 0);
                         <label for="employee_id" class="form-label">Employee</label>
                         <select class="form-select" id="employee_id" name="employee_id" required>
                             <option value="">Select Employee</option>
-                            <?php 
+                            <?php
                             mysqli_data_seek($employees_result, 0);
-                            while ($employee = mysqli_fetch_assoc($employees_result)): 
+                            while ($employee = mysqli_fetch_assoc($employees_result)):
                             ?>
-                                    <option value="<?php echo $employee['EmployeeID']; ?>">
+                                <option value="<?php echo $employee['EmployeeID']; ?>">
                                     <?php echo htmlspecialchars($employee['Employee name'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </option>
+                                </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -233,14 +233,14 @@ mysqli_data_seek($awards_result, 0);
                         <label for="award_id" class="form-label">Award</label>
                         <select class="form-select" id="award_id" name="award_id" required>
                             <option value="">Select Award</option>
-                            <?php 
+                            <?php
                             mysqli_data_seek($awards_result, 0);
-                            while ($award = mysqli_fetch_assoc($awards_result)): 
+                            while ($award = mysqli_fetch_assoc($awards_result)):
                             ?>
-                                    <option value="<?php echo $award['AwardID']; ?>" 
+                                <option value="<?php echo $award['AwardID']; ?>"
                                     data-description="<?php echo htmlspecialchars($award['Description'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <?php echo htmlspecialchars($award['AwardName'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </option>
+                                </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -278,11 +278,11 @@ mysqli_data_seek($awards_result, 0);
                             <label for="edit_employee_id" class="form-label">Employee</label>
                             <select class="form-select" id="edit_employee_id" name="employee_id" required>
                                 <option value="">Select Employee</option>
-                                <?php 
+                                <?php
                                 mysqli_data_seek($employees_result, 0);
-                                while ($employee = mysqli_fetch_assoc($employees_result)): 
+                                while ($employee = mysqli_fetch_assoc($employees_result)):
                                 ?>
-                                    <option value="<?php echo $employee['EmployeeID']; ?>" 
+                                    <option value="<?php echo $employee['EmployeeID']; ?>"
                                         <?php echo ($edit_recognition['EmployeeID'] == $employee['EmployeeID']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($employee['Employee name'], ENT_QUOTES, 'UTF-8'); ?>
                                     </option>
@@ -293,11 +293,11 @@ mysqli_data_seek($awards_result, 0);
                             <label for="edit_award_id" class="form-label">Award</label>
                             <select class="form-select" id="edit_award_id" name="award_id" required>
                                 <option value="">Select Award</option>
-                                <?php 
+                                <?php
                                 mysqli_data_seek($awards_result, 0);
-                                while ($award = mysqli_fetch_assoc($awards_result)): 
+                                while ($award = mysqli_fetch_assoc($awards_result)):
                                 ?>
-                                    <option value="<?php echo $award['AwardID']; ?>" 
+                                    <option value="<?php echo $award['AwardID']; ?>"
                                         data-description="<?php echo htmlspecialchars($award['Description'], ENT_QUOTES, 'UTF-8'); ?>"
                                         <?php echo ($edit_recognition['AwardID'] == $award['AwardID']) ? 'selected' : ''; ?>>
                                         <?php echo htmlspecialchars($award['AwardName'], ENT_QUOTES, 'UTF-8'); ?>
@@ -307,14 +307,14 @@ mysqli_data_seek($awards_result, 0);
                         </div>
                         <div class="mb-3">
                             <label for="edit_recognition_date" class="form-label">Recognition Date</label>
-                            <input type="date" class="form-control" id="edit_recognition_date" name="recognition_date" 
+                            <input type="date" class="form-control" id="edit_recognition_date" name="recognition_date"
                                 value="<?php echo $edit_recognition['RecognitionDate']; ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit_notes" class="form-label">Description</label>
-                            <textarea class="form-control" id="edit_notes" name="notes" rows="3"><?php 
-                                echo htmlspecialchars($edit_recognition['Description'], ENT_QUOTES, 'UTF-8'); 
-                            ?></textarea>
+                            <textarea class="form-control" id="edit_notes" name="notes" rows="3"><?php
+                                                                                                    echo htmlspecialchars($edit_recognition['Description'], ENT_QUOTES, 'UTF-8');
+                                                                                                    ?></textarea>
                         </div>
                         <div class="text-end">
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -344,7 +344,7 @@ mysqli_data_seek($awards_result, 0);
                             <p><strong>Department:</strong> <?php echo htmlspecialchars($view_recognition['Department'], ENT_QUOTES, 'UTF-8'); ?></p>
                             <p><strong>Position:</strong> <?php echo htmlspecialchars($view_recognition['Position'], ENT_QUOTES, 'UTF-8'); ?></p>
                         </div>
-                        
+
                         <div class="detail-item">
                             <h6>Recognition Details</h6>
                             <p><strong>Award:</strong> <?php echo htmlspecialchars($view_recognition['award_name'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -389,7 +389,7 @@ mysqli_data_seek($awards_result, 0);
             const selectedOption = this.options[this.selectedIndex];
             const description = selectedOption.getAttribute('data-description');
             const notesTextarea = document.getElementById('notes');
-            
+
             if (description && !notesTextarea.value) {
                 notesTextarea.value = description;
             }
@@ -402,7 +402,7 @@ mysqli_data_seek($awards_result, 0);
                 const selectedOption = this.options[this.selectedIndex];
                 const description = selectedOption.getAttribute('data-description');
                 const notesTextarea = document.getElementById('edit_notes');
-                
+
                 if (description && !notesTextarea.value) {
                     notesTextarea.value = description;
                 }
@@ -431,7 +431,7 @@ mysqli_data_seek($awards_result, 0);
         // Handle modal close events
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
-            modal.addEventListener('hidden.bs.modal', function () {
+            modal.addEventListener('hidden.bs.modal', function() {
                 // Remove URL parameters when modal is closed
                 const url = new URL(window.location);
                 url.searchParams.delete('view');
@@ -473,9 +473,9 @@ mysqli_data_seek($awards_result, 0);
     }
 
     // Initialize Bootstrap tooltips
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     });
@@ -484,7 +484,7 @@ mysqli_data_seek($awards_result, 0);
         const employeeId = document.getElementById('employee_id').value;
         const awardId = document.getElementById('award_id').value;
         const recognitionDate = document.getElementById('recognition_date').value;
-        
+
         if (!employeeId || !awardId || !recognitionDate) {
             alert('Please fill in all required fields');
             return false;
@@ -504,7 +504,7 @@ mysqli_data_seek($awards_result, 0);
         const employeeId = document.getElementById('edit_employee_id').value;
         const awardId = document.getElementById('edit_award_id').value;
         const recognitionDate = document.getElementById('edit_recognition_date').value;
-        
+
         if (!employeeId || !awardId || !recognitionDate) {
             alert('Please fill in all required fields');
             return false;

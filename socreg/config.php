@@ -26,18 +26,18 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Helper functions
-function sanitize_input($data)
-{
-    global $conn;
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    $data = mysqli_real_escape_string($conn, $data);
-    return $data;
-}
+// function sanitize_input($data)
+// {
+//     global $conn;
+//     $data = trim($data);
+//     $data = stripslashes($data);
+//     $data = htmlspecialchars($data);
+//     $data = mysqli_real_escape_string($conn, $data);
+//     return $data;
+// }
 
-function redirect($url)
-{
-    header("Location: " . $url);
-    exit();
-}
+// function redirect($url)
+// {
+//     header("Location: " . $url);
+//     exit();
+// }
