@@ -15,7 +15,7 @@ $applications = $db->query("SELECT
  WHERE user_id = :user_id", [
     ':user_id' => $_SESSION['user_id']
 ])->fetchAll();
-
+// dd($applications);
 $user_info = $usm->query("SELECT first_name, last_name, email FROM user_account WHERE user_id = :user_id", [
     ':user_id' => $_SESSION['user_id']
 ])->fetch();
@@ -120,9 +120,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ':status' => 'applied',
             ':updated_by' => $recruiter['posted_by'],
         ]);
-        $notif = $db->query("INSERT INTO notifications (title, message, status, applicant_id, type, `for`) VALUES (:title, :message, :status, :applicant_id, :type, :for)", [
-            ':title' => 'new application',
-            ':message' => 'Dear Hr, You have a new Applicant',
+
+        $job_posting = $db->query("SELECT job_title, location, employment_type, salary FROM jobpostings WHERE posting_id = :posting_id", [
+            ':posting_id' => $_GET['id'],
+        ])->fetch();
+
+        $db->query("INSERT INTO notifications (title, message, status, applicant_id, type, `for`) VALUES (:title, :message, :status, :applicant_id, :type, :for)", [
+            ':title' => "New application for {$job_posting['job_title']}",
+            ':message' => "Mr/mrs. {$_POST['first_name']} {$_POST['last_name']} applied for the position of {$job_posting['job_title']} in {$job_posting['location']}. The employment type is {$job_posting['employment_type']} with a salary of {$job_posting['salary']}.",
+            ':status' => 'unread',
+            ':applicant_id' => $applicant_id,
+            ':type' => 'application',
+            ':for' => 'admin',
+        ]);
+
+        $db->query("INSERT INTO notifications (title, message, status, applicant_id, type, `for`) VALUES (:title, :message, :status, :applicant_id, :type, :for)", [
+            ':title' => "New application for {$job_posting['job_title']}",
+            ':message' => "Mr/mrs. {$_POST['first_name']} {$_POST['last_name']} applied for the position of {$job_posting['job_title']} in {$job_posting['location']}. The employment type is {$job_posting['employment_type']} with a salary of {$job_posting['salary']}.",
             ':status' => 'unread',
             ':applicant_id' => $applicant_id,
             ':type' => 'application',

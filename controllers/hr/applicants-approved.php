@@ -5,10 +5,7 @@ $heading = 'APPROVED APPLICANTS';
 $config = require 'config.php';
 $db = new Database($config['database']);
 
-
-
 $applications = $db->query("SELECT * FROM applicants")->fetchAll();
-// dd($applications);
 
 $applicants = $db->query("SELECT  
 a.applicant_id,

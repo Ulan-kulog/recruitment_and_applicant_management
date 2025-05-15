@@ -3,11 +3,11 @@ session_start();
 $heading = 'APPLICANTS';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
 $approved = false;
 $rejected = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
    $status = $db->query('SELECT
    s.status,
    a.applicant_id,
@@ -24,12 +24,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          ':applicant_id' => $_POST['applicant_id'],
       ]);
       $db->query('INSERT INTO notifications (title,message,status,applicant_id,type,`for`) VALUES (:title,:message,:status,:applicant_id,:type,:for)', [
-         ':title' => 'Application Approved',
-         ':message' => 'Hello Mr/Ms ' . $status["first_name"] . ' ' . $status["last_name"] . ' Your application have been Approved',
+         ':title' => 'Application Has been Approved',
+         ':message' => "Hello Mr/Ms {$status['first_name']} {$status['last_name']} Your application have been Approved",
          ':status' => 'unread',
          ':applicant_id' => $status['applicant_id'],
          ':type' => 'application',
          ':for' => 'applicant',
+      ]);
+      $db->query('INSERT INTO notifications (title,message,status,applicant_id,type,`for`) VALUES (:title,:message,:status,:applicant_id,:type,:for)', [
+         ':title' => 'Application Has been Approved',
+         ':message' => "Application ID: {$status['applicant_id']} - {$status['first_name']} {$status['last_name']} has been approved and requires further action.",
+         ':status' => 'unread',
+         ':applicant_id' => $status['applicant_id'],
+         ':type' => 'application',
+         ':for' => 'admin',
+      ]);
+      $date = date("Y-m-d");
+      $time = date("h:i:sa");
+      $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
+         "department_id" => 1,
+         "user_id" => $_SESSION['user_id'],
+         "transaction_type" => 'approving application',
+         "description" => "Application ID {$_POST['applicant_id']} was approved by Recruiter {$_SESSION['username']} on {$date} at {$time}.",
+         "department_affected" => 'HR part 1&2',
+         "module_affected" => 'recruitment and applicant management',
+      ]);
+
+      $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+         "department_id" => 1,
+         "user_id" => $_SESSION['user_id'],
+         "action" => 'update',
+         "description" => "On {$date} at {$time}, User {$_SESSION['username']} performed an 'approve application' action on Application ID {$_POST['applicant_id']}.",
+         "department_affected" => 'HR part 1&2',
+         "module_affected" => 'recruitment and applicant management',
       ]);
       $approved = true;
    } elseif (!empty($_POST['reject']) && $status['status'] == 'applied') {
@@ -45,6 +72,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          ':applicant_id' => $status['applicant_id'],
          ':type' => 'application',
          ':for' => 'applicant',
+      ]);
+      $db->query('INSERT INTO notifications (title,message,status,applicant_id,type,`for`) VALUES (:title,:message,:status,:applicant_id,:type,:for)', [
+         ':title' => 'Application Rejected',
+         ':message' => "Applicant: {$status['first_name']} {$status['last_name']} ,Applicant ID: {$status['applicant_id']} Application has been marked as rejected.",
+         ':status' => 'unread',
+         ':applicant_id' => $status['applicant_id'],
+         ':type' => 'application',
+         ':for' => 'admin',
+      ]);
+      $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
+         "department_id" => 1,
+         "user_id" => $_SESSION['user_id'],
+         "transaction_type" => 'rejecting application',
+         "description" => "Application ID {$_POST['applicant_id']} was rejected by Recruiter {$_SESSION['username']} on {$date} at {$time}.",
+         "department_affected" => 'HR part 1&2',
+         "module_affected" => 'recruitment and applicant management',
+      ]);
+
+      $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+         "department_id" => 1,
+         "user_id" => $_SESSION['user_id'],
+         "action" => 'update',
+         "description" => "On {$date} at {$time}, User {$_SESSION['username']} performed an 'application rejection' action on Application ID {$_POST['applicant_id']}.",
+         "department_affected" => 'HR part 1&2',
+         "module_affected" => 'recruitment and applicant management',
       ]);
       $rejected = true;
    }

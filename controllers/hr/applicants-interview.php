@@ -9,7 +9,6 @@ $db = new Database($config['database']);
 $success = false;
 $rejected = false;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // dd($_POST);
     $applicant = $db->query("SELECT 
     a.first_name,
     a.last_name
@@ -34,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':applicant_id' => $_POST['applicant_id'],
             'for' => 'hiring manager'
         ]);
+
         header('Location: /hr/applicants-history');
         exit;
     }

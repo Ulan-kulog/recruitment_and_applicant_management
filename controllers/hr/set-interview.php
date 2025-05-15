@@ -3,6 +3,7 @@ session_start();
 $heading = 'APPLICANTS';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
@@ -33,12 +34,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $db->query("INSERT INTO notifications (applicant_id, message, type, `for`, title) VALUES (:applicant_id, :message, :type, :for, :title)", [
             ':applicant_id' => $_POST['applicant_id'],
-            ':type' => 'Initial',
-            ':for' => 'applicant',
             ':title' => 'Initial interview Scheduled !',
             ':message' => "Dear Applicant, We are pleased to inform you that your initial interview has been scheduled on " . $_POST['date'] . " at " . $_POST['time'] . ". Please ensure you are prepared and available at the specified time. We look forward to discussing your qualifications and potential with us.
-Thank you, "
+            Thank you, ",
+            ':type' => 'Initial',
+            ':for' => 'applicant',
         ]);
+
+        $applicant = $db->query('SELECT first_name,last_name FROM applicants WHERE applicant_id = :applicant_id', [
+            'applicant_id' => $_GET['id'],
+        ])->fetch();
+
+        $db->query("INSERT INTO notifications (applicant_id, message, type, `for`, title) VALUES (:applicant_id, :message, :type, :for, :title)", [
+            ':applicant_id' => $_POST['applicant_id'],
+            ':title' => 'Initial interview Scheduled !',
+            ':message' => "An initial interview was scheduled by {$_SESSION['username']} for applicant: {$applicant['first_name']} {$applicant['last_name']} on  {$_POST['date']} at {$_POST['time']}.",
+            ':type' => 'Initial',
+            ':for' => 'admin',
+        ]);
+
+        $usm->query("INSERT INTO department_transaction (department_id, user_id, transaction_type, description, department_affected, module_affected) VALUES (:department_id, :user_id, :transaction_type, :description, :department_affected, :module_affected)", [
+            "department_id" => 1,
+            "user_id" => $_SESSION['user_id'],
+            "transaction_type" => 'initial interview',
+            "description" => "Recruiter: {$_SESSION['username']} scheduled an initial interview for applicant: {$applicant['first_name']} {$applicant['last_name']} on {$_POST['date']} at {$_POST['time']}",
+            "department_affected" => 'HR part 1&2',
+            "module_affected" => 'recruitment and applicant management',
+        ]);
+
+        $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+            "department_id" => 1,
+            "user_id" => $_SESSION['user_id'],
+            "action" => 'create',
+            "description" => "An initial interview was scheduled by {$_SESSION['username']} for applicant: {$applicant['first_name']} {$applicant['last_name']}",
+            "department_affected" => 'HR part 1&2',
+            "module_affected" => 'recruitment and applicant management',
+        ]);
+
         header('Location: /hr/applicants-interview');
         exit();
     }
@@ -47,6 +79,5 @@ Thank you, "
 $applicant = $db->query('SELECT * FROM applicants WHERE applicant_id = :applicant_id', [
     'applicant_id' => $_GET['id'],
 ])->fetch();
-// dd($applicant);
 
 require 'views/hr/set-interview.view.php';

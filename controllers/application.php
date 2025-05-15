@@ -89,11 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':applicant_id' => $_POST['applicant_id'],
       ]);
     }
+
     $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
       ':department_id' => 1,
       ':user_id' => $_SESSION['user_id'],
       ':action' => 'Update',
-      ':description' => 'Updated application with ID: ' . $_POST['applicant_id'],
+      ':description' => "applicant: {$_POST['applicant_id']} has updated their application information.",
       ':department_affected' => 'HR part 1&2',
       ':module_affected' => 'recruitment and applicant management'
     ]);

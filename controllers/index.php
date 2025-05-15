@@ -10,7 +10,6 @@ $client = new Google\Client();
 $client->setClientId($config['google']['client_id']);
 $client->setClientSecret($config['google']['client_secret']);
 $client->setRedirectUri($config['google']['redirect_uri']);
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['login'] ?? '' == true) {
 
@@ -30,14 +29,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user = $usm->query('SELECT * FROM user_account WHERE email = :email', [
                 ':email' => $email,
             ])->fetch();
-
             if (!$user) {
                 $errors['email'] = 'Email or password is incorrect';
+                $usm->query("INSERT INTO department_log_history(department_id, email, event_type, failure_reason, ip_address, user_agent, login_type) VALUES(:department_id, :email, :event_type, :failure_reason, :ip_address, :user_agent, :login_type)", [
+                    ':department_id' => 1,
+                    ':email' => $_POST['email'],
+                    ':event_type' => 'login failed',
+                    ':failure_reason' => $errors['email'],
+                    ':ip_address' => $_SERVER['REMOTE_ADDR'],
+                    ':user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                    ':login_type' => 'standard',
+                ]);
             } elseif (!password_verify($password, $user['password'])) {
                 $errors['password'] = 'Password is incorrect';
+                $usm->query("INSERT INTO department_log_history(department_id, email, event_type, failure_reason, ip_address, user_agent, login_type) VALUES(:department_id, :email, :event_type, :failure_reason, :ip_address, :user_agent, :login_type)", [
+                    ':department_id' => 1,
+                    ':email' => $_POST['email'],
+                    ':event_type' => 'login failed',
+                    ':failure_reason' => $errors['password'],
+                    ':ip_address' => $_SERVER['REMOTE_ADDR'],
+                    ':user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                    ':login_type' => 'standard',
+                ]);
             }
 
             if (empty($errors) && $user) {
+                $usm->query("INSERT INTO department_log_history(department_id, email, event_type, ip_address, user_agent, login_type) VALUES(:department_id, :email, :event_type, :ip_address, :user_agent, :login_type)", [
+                    ':department_id' => 1,
+                    ':email' => $user['email'],
+                    ':event_type' => 'login',
+                    ':ip_address' => $_SERVER['REMOTE_ADDR'],
+                    ':user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                    ':login_type' => 'standard',
+                ]);
                 if ($user['role'] === 'admin') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];

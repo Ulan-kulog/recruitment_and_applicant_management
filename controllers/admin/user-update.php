@@ -29,10 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'department_id' => 1,
             'user_id' => $_SESSION['user_id'],
             'action' => 'update',
-            'description' => 'admin: ' . $_SESSION['username'] . ' just updated a User account with the user_id: ' . $_POST['user_id'],
+            'description' => "admin: {$_SESSION['username']} just updated a User account with the user_id: {$_POST['user_id']}",
             'department_affected' => 'HR part 1&2',
             'module_affected' => 'recruitment and applicant management'
         ]);
+
         header('Location: /admin/users');
         exit;
     }

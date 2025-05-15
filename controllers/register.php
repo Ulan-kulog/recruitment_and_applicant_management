@@ -38,15 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($errors)) {
         if ($email && $password && $username) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            // $db->query("INSERT INTO user_accounts (first_name, last_name, username, email, password, role, register_type) VALUES (:first_name, :last_name, :username, :email, :password ,:role ,:register_type)", [
-            //     'first_name' => $first_name,
-            //     'last_name' => $last_name,
-            //     'username' => $username,
-            //     'email' => $email,
-            //     'password' => $hashedPassword,
-            //     'role' => 6,
-            //     'register_type' => 'standard',
-            // ]);
 
             $usm->query("INSERT INTO user_account (department_id, first_name, last_name, username, email, password, role, register_type) VALUES (:department_id, :first_name, :last_name, :username, :email, :password ,:role ,:register_type)", [
                 'department_id' => 1,
@@ -57,6 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'password' => $hashedPassword,
                 'role' => 'applicant',
                 'register_type' => 'standard',
+            ]);
+
+            $user_id = $usm->pdo->lastInsertId();
+            $usm->query("INSERT INTO department_audit_trail (department_id, user_id, action, description, department_affected, module_affected) VALUES (:department_id, :user_id, :action, :description, :department_affected, :module_affected)", [
+                ':department_id' => 1,
+                ':user_id' => $user_id,
+                ':action' => 'create',
+                ':description' => "Mr/mrs $first_name $last_name has registered as an applicant.",
+                ':department_affected' => 'HR part 1&2',
+                ':module_affected' => 'recruitment and applicant management'
             ]);
 
             $success = true;
