@@ -67,7 +67,7 @@ return [
     '/admin/interview_schedules-create' => 'controllers/admin/interview_schedules-create.php',
 
     // SOCIAL RECOGNITION
-    '/admin/socreg/finaltemplate/awards' => 'controllers/social-recognition/awards.php',
-    '/admin/socreg/finaltemplate/recognitions' => 'controllers/social-recognition/recognitions.php',
-    '/admin/socreg/finaltemplate/categories' => 'controllers/social-recognition/categories.php',
+    '/admin/socreg/awards' => 'controllers/social-recognition/awards.php',
+    '/admin/socreg/recognitions' => 'controllers/social-recognition/recognitions.php',
+    '/admin/socreg/categories' => 'controllers/social-recognition/categories.php',
 ];

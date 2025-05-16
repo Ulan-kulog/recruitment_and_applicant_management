@@ -188,9 +188,9 @@
                 </div>
                 <div id="general-ledger-dropdown" class="menu-drop hidden flex-col w-full bg-[#F7E6CA] rounded-lg p-4 space-y-2 mt-2">
                     <ul class="space-y-2">
-                        <li><a href="/admin/socreg/finaltemplate/awards?page=awards" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Awards</a></li>
-                        <li><a href="/admin/socreg/finaltemplate/recognitions?page=recognitions" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Employee Recognition</a></li>
-                        <li><a href="/admin/socreg/finaltemplate/categories?page=categories" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Categories</a></li>
+                        <li><a href="/admin/socreg/awards?page=awards" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Awards</a></li>
+                        <li><a href="/admin/socreg/recognitions?page=recognitions" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Employee Recognition</a></li>
+                        <li><a href="/admin/socreg/categories?page=categories" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Categories</a></li>
                     </ul>
                 </div>
             </div>

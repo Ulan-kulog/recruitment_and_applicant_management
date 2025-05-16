@@ -25,6 +25,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// function sanitize_page($page)
+// {
+//     return preg_replace('/[^a-zA-Z0-9_-]/', '', $page);
+// }
+
 // Helper functions
 // function sanitize_input($data)
 // {
