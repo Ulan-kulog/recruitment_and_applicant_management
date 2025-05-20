@@ -1,7 +1,16 @@
-<?php require 'partials/head.php' ?>
+<?php require 'partials/admin/head.php' ?>
 
 <div class="z-50 min-h-screen w-full flex items-center justify-center bg-[#F7E6CA] p-4">
     <div class="w-full max-w-md p-8 rounded-lg bg-white shadow-lg">
+        <?php if ($session_timeout ?? '' === true): ?>
+            <div role="alert" class="alert alert-error mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h1 class="border-r pr-2 font-semibold">Session Timeout</h1>
+                <span>You have been log out due to inactivity for 30 minutes</span>
+            </div>
+        <?php endif ?>
         <div class="flex justify-center mb-8">
             <img src="/img/Logo-Name.png" alt="Avalon Logo" width="250">
         </div>

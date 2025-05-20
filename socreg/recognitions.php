@@ -1,9 +1,23 @@
 <?php
 require_once 'socreg/config.php';
+require_once __DIR__ . '/includes/audit_helpers.php';
+require_once __DIR__ . '/includes/rbac.php';
+
+// Check if user is logged in
+// if (!isset($_SESSION['user_id'])) {
+//     header("Location: login.php");
+//     exit();
+// }
+
+// Check if user has permission to view recognitions
+// requirePermission('recognitions', 'view');
 
 // Handle CRUD operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['add_recognition'])) {
+        // Check if user has permission to add recognitions
+        // requirePermission('recognitions', 'add');
+
         // Create operation
         $employeeID = $_POST['employee_id'];
         $awardID = $_POST['award_id'];
@@ -19,13 +33,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("iiss", $employeeID, $awardID, $recognitionDate, $notes);
 
             if ($stmt->execute()) {
-                header("Location: ?page=recognitions&success=add");
-                exit();
+                // Audit trail insert for add recognition
+                $user_id = $_SESSION['user_id'] ?? 0;
+                $user_name = $_SESSION['name'] ?? '';
+                $role = $_SESSION['role'] ?? '';
+                $department_id = $_SESSION['department_id'] ?? 0;
+                $user_audit_trail_id = 0;
+                $action = 'Add Recognition';
+                $department_affected = getDepartmentAffectedName($department_id);
+                $module_affected = 'social recognition';
+
+                $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                $audit_stmt = $conn->prepare($audit_sql);
+                $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+                $audit_stmt->execute();
+
+                // header("Location: ?page=recognitions&success=add");
+                // exit();
             } else {
                 $error = "Error adding recognition: " . $stmt->error;
             }
         }
     } elseif (isset($_POST['update_recognition'])) {
+        // Check if user has permission to edit recognitions
+        // requirePermission('recognitions', 'edit');
+
         // Update operation
         $recognitionID = $_POST['recognition_id'];
         $employeeID = $_POST['employee_id'];
@@ -38,8 +70,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("iissi", $employeeID, $awardID, $recognitionDate, $notes, $recognitionID);
 
         if ($stmt->execute()) {
-            header("Location: ?page=recognitions&success=update");
-            exit();
+            // Audit trail insert for update recognition
+            $user_id = $_SESSION['user_id'] ?? 0;
+            $user_name = $_SESSION['name'] ?? '';
+            $role = $_SESSION['role'] ?? '';
+            $department_id = $_SESSION['department_id'] ?? 0;
+            $user_audit_trail_id = 0;
+            $action = 'Update Recognition';
+            $department_affected = getDepartmentAffectedName($department_id);
+            $module_affected = 'social recognition';
+
+            $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $audit_stmt = $conn->prepare($audit_sql);
+            $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+            $audit_stmt->execute();
+
+            // header("Location: ?page=recognitions&success=update");
+            // exit();
         } else {
             $error = "Error updating recognition: " . $conn->error;
         }
@@ -48,14 +95,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Handle Delete operation
 if (isset($_GET['delete'])) {
+    // Check if user has permission to delete recognitions
+    // requirePermission('recognitions', 'delete');
+
     $recognitionID = $_GET['delete'];
     $sql = "DELETE FROM employeerecognition WHERE RecognitionID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $recognitionID);
 
     if ($stmt->execute()) {
-        header("Location: ?page=recognitions&success=delete");
-        exit();
+        // Audit trail insert for delete recognition
+        $user_id = $_SESSION['user_id'] ?? 0;
+        $user_name = $_SESSION['name'] ?? '';
+        $role = $_SESSION['role'] ?? '';
+        $department_id = $_SESSION['department_id'] ?? 0;
+        $user_audit_trail_id = 0;
+        $action = 'Delete Recognition';
+        $department_affected = getDepartmentAffectedName($department_id);
+        $module_affected = 'social recognition';
+
+        $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $audit_stmt = $conn->prepare($audit_sql);
+        $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+        $audit_stmt->execute();
+
+        // header("Location: ?page=recognitions&success=delete");
+        // exit();
     } else {
         $error = "Error deleting recognition: " . $conn->error;
     }
@@ -117,11 +182,12 @@ while ($award = mysqli_fetch_assoc($awards_result)) {
 mysqli_data_seek($awards_result, 0);
 ?>
 
-<div class="container-fluid">
-    <div class="page-header">
-        <h1>Employee Recognitions</h1>
-        <button type="button" id="recog-btn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRecognitionModal">
-            <i class="bi bi-plus-circle me-2"></i> Add Recognition
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold ">Employee Recognitions</h1>
+        <button type="button" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors" onclick="document.getElementById('addRecognitionModal').classList.remove('hidden')">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Recognition</span>
         </button>
     </div>
 
@@ -161,63 +227,69 @@ mysqli_data_seek($awards_result, 0);
         });
     </script>
 
-    <div class="table-container table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Employee</th>
-                    <th>Award</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo $row['RecognitionID']; ?></td>
-                            <td><?php echo htmlspecialchars($row['employee_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars($row['award_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo date('M d, Y', strtotime($row['RecognitionDate'])); ?></td>
-                            <td>
-                                <div class="actions">
-                                    <button class="btn" onclick="viewRecognition(<?php echo $row['RecognitionID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="View Recognition">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn" onclick="editRecognition(<?php echo $row['RecognitionID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Recognition">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn" onclick="confirmDeleteRecognition(<?php echo $row['RecognitionID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Recognition">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
+    <div class="bg-white rounded-lg shadow-sm border border-[#594423] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#594423] text-white">
                     <tr>
-                        <td colspan="5" class="text-center">No recognitions found</td>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Employee</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Award</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Actions</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-accent">
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr class="hover:bg-accent/30 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo $row['RecognitionID']; ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo htmlspecialchars($row['employee_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo htmlspecialchars($row['award_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo date('M d, Y', strtotime($row['RecognitionDate'])); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <button class=" hover: transition-colors" onclick="viewRecognition(<?php echo $row['RecognitionID']; ?>)" title="View Recognition">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button class=" hover: transition-colors" onclick="editRecognition(<?php echo $row['RecognitionID']; ?>)" title="Edit Recognition">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class=" hover:text-red-500 transition-colors" onclick="confirmDeleteRecognition(<?php echo $row['RecognitionID']; ?>)" title="Delete Recognition">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm ">No recognitions found</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Add Recognition Modal -->
-<div class="modal fade" id="addRecognitionModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Recognition</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+<div id="addRecognitionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Add New Recognition</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('addRecognitionModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <form action="" method="POST" id="addRecognitionForm">
-                    <div class="mb-3">
-                        <label for="employee_id" class="form-label">Employee</label>
-                        <select class="form-select" id="employee_id" name="employee_id" required>
+                    <div class="mb-4">
+                        <label for="employee_id" class="block text-sm font-medium ">Employee</label>
+                        <select class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="employee_id" name="employee_id" required>
                             <option value="">Select Employee</option>
                             <?php
                             mysqli_data_seek($employees_result, 0);
@@ -229,9 +301,9 @@ mysqli_data_seek($awards_result, 0);
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="award_id" class="form-label">Award</label>
-                        <select class="form-select" id="award_id" name="award_id" required>
+                    <div class="mb-4">
+                        <label for="award_id" class="block text-sm font-medium ">Award</label>
+                        <select class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="award_id" name="award_id" required>
                             <option value="">Select Award</option>
                             <?php
                             mysqli_data_seek($awards_result, 0);
@@ -244,17 +316,17 @@ mysqli_data_seek($awards_result, 0);
                             <?php endwhile; ?>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="recognition_date" class="form-label">Recognition Date</label>
-                        <input type="date" class="form-control" id="recognition_date" name="recognition_date" required>
+                    <div class="mb-4">
+                        <label for="recognition_date" class="block text-sm font-medium ">Recognition Date</label>
+                        <input type="date" class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity50" id="recognition_date" name="recognition_date" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="notes" class="form-label">Description</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    <div class="mb-4">
+                        <label for="notes" class="block text-sm font-medium ">Description</label>
+                        <textarea class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="notes" name="notes" rows="3"></textarea>
                     </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" name="add_recognition" class="btn btn-primary ms-2">Add Recognition</button>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('addRecognitionModal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" name="add_recognition" class="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Add Recognition</button>
                     </div>
                 </form>
             </div>
@@ -263,20 +335,24 @@ mysqli_data_seek($awards_result, 0);
 </div>
 
 <!-- Edit Recognition Modal -->
-<div class="modal fade" id="editRecognitionModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Recognition</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form method="POST" action="" id="editRecognitionForm">
-                    <?php if ($edit_recognition): ?>
+<div id="editRecognitionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Edit Recognition</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('editRecognitionModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <?php if ($edit_recognition): ?>
+                    <form method="POST" action="" id="editRecognitionForm">
                         <input type="hidden" name="recognition_id" value="<?php echo $edit_recognition['RecognitionID']; ?>">
-                        <div class="mb-3">
-                            <label for="edit_employee_id" class="form-label">Employee</label>
-                            <select class="form-select" id="edit_employee_id" name="employee_id" required>
+                        <div class="mb-4">
+                            <label for="edit_employee_id" class="block text-sm font-medium ">Employee</label>
+                            <select class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_employee_id" name="employee_id" required>
                                 <option value="">Select Employee</option>
                                 <?php
                                 mysqli_data_seek($employees_result, 0);
@@ -289,9 +365,9 @@ mysqli_data_seek($awards_result, 0);
                                 <?php endwhile; ?>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_award_id" class="form-label">Award</label>
-                            <select class="form-select" id="edit_award_id" name="award_id" required>
+                        <div class="mb-4">
+                            <label for="edit_award_id" class="block text-sm font-medium ">Award</label>
+                            <select class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_award_id" name="award_id" required>
                                 <option value="">Select Award</option>
                                 <?php
                                 mysqli_data_seek($awards_result, 0);
@@ -305,95 +381,102 @@ mysqli_data_seek($awards_result, 0);
                                 <?php endwhile; ?>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_recognition_date" class="form-label">Recognition Date</label>
-                            <input type="date" class="form-control" id="edit_recognition_date" name="recognition_date"
+                        <div class="mb-4">
+                            <label for="edit_recognition_date" class="block text-sm font-medium ">Recognition Date</label>
+                            <input type="date" class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_recognition_date" name="recognition_date"
                                 value="<?php echo $edit_recognition['RecognitionDate']; ?>" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_notes" class="form-label">Description</label>
-                            <textarea class="form-control" id="edit_notes" name="notes" rows="3"><?php
-                                                                                                    echo htmlspecialchars($edit_recognition['Description'], ENT_QUOTES, 'UTF-8');
-                                                                                                    ?></textarea>
+                        <div class="mb-4">
+                            <label for="edit_notes" class="block text-sm font-medium ">Description</label>
+                            <textarea class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_notes" name="notes" rows="3"><?php
+                                                                                                                                                                                                                    echo htmlspecialchars($edit_recognition['Description'], ENT_QUOTES, 'UTF-8');
+                                                                                                                                                                                                                    ?></textarea>
                         </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" name="update_recognition" class="btn btn-primary ms-2">Update Recognition</button>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('editRecognitionModal').classList.add('hidden')">Cancel</button>
+                            <button type="submit" name="update_recognition" class="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Update Recognition</button>
                         </div>
                     <?php endif; ?>
-                </form>
             </div>
         </div>
     </div>
 </div>
 
 <!-- View Recognition Modal -->
-<div class="modal fade" id="viewRecognitionModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Recognition Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+<div id="viewRecognitionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Recognition Details</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('viewRecognitionModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <?php if ($view_recognition): ?>
-                    <div class="recognition-details">
-                        <div class="detail-item">
-                            <h6>Employee Information</h6>
-                            <p><strong>Name:</strong> <?php echo htmlspecialchars($view_recognition['employee_name'], ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p><strong>Department:</strong> <?php echo htmlspecialchars($view_recognition['Department'], ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p><strong>Position:</strong> <?php echo htmlspecialchars($view_recognition['Position'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <div class="space-y-4">
+                        <div>
+                            <h6 class="text-sm font-medium  mb-2">Employee Information</h6>
+                            <div class="space-y-2">
+                                <p class="text-sm "><span class="font-medium ">Name:</span> <?php echo htmlspecialchars($view_recognition['employee_name'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Department:</span> <?php echo htmlspecialchars($view_recognition['Department'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Position:</span> <?php echo htmlspecialchars($view_recognition['Position'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            </div>
                         </div>
 
-                        <div class="detail-item">
-                            <h6>Recognition Details</h6>
-                            <p><strong>Award:</strong> <?php echo htmlspecialchars($view_recognition['award_name'], ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p><strong>Date:</strong> <?php echo date('F j, Y', strtotime($view_recognition['RecognitionDate'])); ?></p>
-                            <p><strong>Category:</strong> <?php echo htmlspecialchars($view_recognition['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p><strong>Description:</strong> <?php echo htmlspecialchars($view_recognition['award_description'], ENT_QUOTES, 'UTF-8'); ?></p>
+                        <div>
+                            <h6 class="text-sm font-medium  mb-2">Recognition Details</h6>
+                            <div class="space-y-2">
+                                <p class="text-sm "><span class="font-medium ">Award:</span> <?php echo htmlspecialchars($view_recognition['award_name'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Date:</span> <?php echo date('F j, Y', strtotime($view_recognition['RecognitionDate'])); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Category:</span> <?php echo htmlspecialchars($view_recognition['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Description:</span> <?php echo htmlspecialchars($view_recognition['award_description'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            </div>
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="alert alert-danger">Recognition details not found.</div>
+                    <div class="p-4 text-sm text-red-500 bg-red-50 rounded-md">Recognition details not found.</div>
                 <?php endif; ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="mt-6 flex justify-end">
+                    <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('viewRecognitionModal').classList.add('hidden')">Close</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Initialize Bootstrap modals
+    // Initialize modals
     let viewModal, editModal, addModal;
     document.addEventListener('DOMContentLoaded', function() {
-        viewModal = new bootstrap.Modal(document.getElementById('viewRecognitionModal'));
-        editModal = new bootstrap.Modal(document.getElementById('editRecognitionModal'));
-        addModal = new bootstrap.Modal(document.getElementById('addRecognitionModal'));
-
         // Show modals based on URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('view')) {
-            viewModal.show();
+            document.getElementById('viewRecognitionModal').classList.remove('hidden');
         }
         if (urlParams.has('edit')) {
-            editModal.show();
+            document.getElementById('editRecognitionModal').classList.remove('hidden');
         }
 
         // Set today's date as default for recognition date in add modal
-        document.getElementById('recognition_date').valueAsDate = new Date();
+        const recognitionDateInput = document.getElementById('recognition_date');
+        if (recognitionDateInput) recognitionDateInput.valueAsDate = new Date();
 
         // Handle award selection change for add modal
-        document.getElementById('award_id').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const description = selectedOption.getAttribute('data-description');
-            const notesTextarea = document.getElementById('notes');
+        const addAwardSelect = document.getElementById('award_id');
+        if (addAwardSelect) {
+            addAwardSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const description = selectedOption.getAttribute('data-description');
+                const notesTextarea = document.getElementById('notes');
 
-            if (description && !notesTextarea.value) {
-                notesTextarea.value = description;
-            }
-        });
+                if (description && notesTextarea && !notesTextarea.value) {
+                    notesTextarea.value = description;
+                }
+            });
+        }
 
         // Handle award selection change for edit modal
         const editAwardSelect = document.getElementById('edit_award_id');
@@ -403,40 +486,60 @@ mysqli_data_seek($awards_result, 0);
                 const description = selectedOption.getAttribute('data-description');
                 const notesTextarea = document.getElementById('edit_notes');
 
-                if (description && !notesTextarea.value) {
+                if (description && notesTextarea && !notesTextarea.value) {
                     notesTextarea.value = description;
                 }
             });
         }
 
-        // Handle form submissions
+        // Handle form submissions - Basic validation (can be enhanced)
         const addForm = document.getElementById('addRecognitionForm');
         if (addForm) {
             addForm.addEventListener('submit', function(e) {
-                if (!validateAddForm()) {
-                    e.preventDefault();
-                }
+                // Add validation logic here if needed
+                // if (!validateAddForm()) {
+                //     e.preventDefault();
+                // }
             });
         }
 
         const editForm = document.getElementById('editRecognitionForm');
         if (editForm) {
             editForm.addEventListener('submit', function(e) {
-                if (!validateEditForm()) {
-                    e.preventDefault();
-                }
+                // Add validation logic here if needed
+                // if (!validateEditForm()) {
+                //     e.preventDefault();
+                // }
             });
         }
 
         // Handle modal close events
-        const modals = document.querySelectorAll('.modal');
+        const modals = document.querySelectorAll('[id$="Modal"]');
         modals.forEach(modal => {
-            modal.addEventListener('hidden.bs.modal', function() {
-                // Remove URL parameters when modal is closed
-                const url = new URL(window.location);
-                url.searchParams.delete('view');
-                url.searchParams.delete('edit');
-                window.history.replaceState({}, '', url);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    // Remove URL parameters when modal is closed
+                    const url = new URL(window.location);
+                    url.searchParams.delete('view');
+                    url.searchParams.delete('edit');
+                    window.history.replaceState({}, '', url);
+                }
+            });
+        });
+
+        // Add click event listeners to close buttons
+        document.querySelectorAll('[onclick*="hide()"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('[id$="Modal"]');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    // Remove URL parameters when modal is closed
+                    const url = new URL(window.location);
+                    url.searchParams.delete('view');
+                    url.searchParams.delete('edit');
+                    window.history.replaceState({}, '', url);
+                }
             });
         });
     });
@@ -472,51 +575,11 @@ mysqli_data_seek($awards_result, 0);
         });
     }
 
-    // Initialize Bootstrap tooltips
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    });
-
-    function validateAddForm() {
-        const employeeId = document.getElementById('employee_id').value;
-        const awardId = document.getElementById('award_id').value;
-        const recognitionDate = document.getElementById('recognition_date').value;
-
-        if (!employeeId || !awardId || !recognitionDate) {
-            alert('Please fill in all required fields');
-            return false;
-        }
-
-        const today = new Date();
-        const selectedDate = new Date(recognitionDate);
-        if (selectedDate > today) {
-            alert('Recognition date cannot be in the future');
-            return false;
-        }
-
-        return true;
-    }
-
-    function validateEditForm() {
-        const employeeId = document.getElementById('edit_employee_id').value;
-        const awardId = document.getElementById('edit_award_id').value;
-        const recognitionDate = document.getElementById('edit_recognition_date').value;
-
-        if (!employeeId || !awardId || !recognitionDate) {
-            alert('Please fill in all required fields');
-            return false;
-        }
-
-        const today = new Date();
-        const selectedDate = new Date(recognitionDate);
-        if (selectedDate > today) {
-            alert('Recognition date cannot be in the future');
-            return false;
-        }
-
-        return true;
-    }
+    // Initialize Bootstrap tooltips - No longer needed with Tailwind
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    //     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    //         return new bootstrap.Tooltip(tooltipTriggerEl)
+    //     })
+    // });
 </script>

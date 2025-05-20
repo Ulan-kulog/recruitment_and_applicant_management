@@ -83,6 +83,34 @@
         icon.classList.toggle("bx-chevron-right");
         icon.classList.toggle("bx-chevron-down");
     }
+
+    const INACTIVITY_LIMIT = 1800;
+    let inactivityTimer;
+
+    function logoutUser() {
+        fetch('logout.php')
+            .then(() => {
+                swal.fire({
+                    title: "Session Expired",
+                    text: "You have been logged out due to inactivity.",
+                    icon: "warning",
+                    button: "OK",
+                });
+                window.location.href = '/session_timeout';
+            })
+            .catch(err => console.error("Logout error:", err));
+    }
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(logoutUser, INACTIVITY_LIMIT * 1000);
+    }
+
+    ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+        document.addEventListener(event, resetInactivityTimer);
+    });
+
+    resetInactivityTimer();
 </script>
 <script src="/js/sweetAlert.js"></script>
 </body>

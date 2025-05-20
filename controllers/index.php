@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 session_start();
-
+// dd($usm);
 $config = require 'config.php';
 $db = new Database($config['database']);
 $usm = new Database($config['usm']);
@@ -65,30 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($user['role'] === 'admin') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     header("Location: /admin/");
                     exit();
                 } elseif ($user['role'] === 'manager') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     header('Location: /manager/');
                     exit();
                 } elseif ($user['role'] === 'recruiter') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     header("Location: /hr/");
                     exit();
                 } elseif ($user['role'] === 'hiring manager') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     header('Location: /hr_hiring/');
                     exit();
                 } elseif ($user['role'] === 'applicant') {
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     header('Location: /home');
                     exit();

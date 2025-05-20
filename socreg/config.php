@@ -17,32 +17,31 @@ if (!$conn) {
 mysqli_set_charset($conn, "utf8mb4");
 
 // Error reporting
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 // Start session (ensure this is at the top and no output is sent before this)
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// function sanitize_page($page)
-// {
-//     return preg_replace('/[^a-zA-Z0-9_-]/', '', $page);
-// }
-
 // Helper functions
-// function sanitize_input($data)
-// {
-//     global $conn;
-//     $data = trim($data);
-//     $data = stripslashes($data);
-//     $data = htmlspecialchars($data);
-//     $data = mysqli_real_escape_string($conn, $data);
-//     return $data;
-// }
+if (!function_exists('sanitize_input')) {
+    function sanitize_input($data)
+    {
+        global $conn;
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        $data = mysqli_real_escape_string($conn, $data);
+        return $data;
+    }
+}
 
-// function redirect($url)
-// {
-//     header("Location: " . $url);
-//     exit();
-// }
+if (!function_exists('redirect')) {
+    function redirect($url)
+    {
+        header("Location: " . $url);
+        exit();
+    }
+}

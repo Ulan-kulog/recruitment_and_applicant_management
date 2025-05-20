@@ -1,3 +1,3 @@
 <?php
-
-require 'socreg/index.php';
+$heading = 'RECOGNITIONS';
+require 'socreg/finaltemplate.php';

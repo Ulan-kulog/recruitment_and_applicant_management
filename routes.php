@@ -14,6 +14,7 @@ return [
     '/logout' => 'controllers/logout.php',
     '/notifications' => 'controllers/notifications.php',
     '/callback' => 'controllers/callback.php',
+    '/session_timeout' => 'controllers/session_timeout.php',
 
     // hr routes
     '/hr/' => 'controllers/hr/index.php',
@@ -70,4 +71,23 @@ return [
     '/admin/socreg/awards' => 'controllers/social-recognition/awards.php',
     '/admin/socreg/recognitions' => 'controllers/social-recognition/recognitions.php',
     '/admin/socreg/categories' => 'controllers/social-recognition/categories.php',
+
+    // LEARNING AND TARAINING
+    '/admin/lmtm/employees' => 'controllers/lmtm/employees.php',
+    '/admin/lmtm/trainers' => 'controllers/lmtm/trainers.php',
+    '/admin/lmtm/enrollments' => 'controllers/lmtm/enrollments.php',
+    '/admin/lmtm/programs' => 'controllers/lmtm/training_programs.php',
+    '/admin/lmtm/materials' => 'controllers/lmtm/training_materials.php',
+    '/admin/lmtm/assessments' => 'controllers/lmtm/assessments.php',
+
+    // PERFORMANCE MANAGEMENT
+    '/admin/pm/appraisals' => 'controllers/pm/appraisals.php',
+    '/admin/pm/kpi' => 'controllers/pm/kpi.php',
+    '/admin/pm/performance' => 'controllers/pm/performance.php',
+    '/admin/pm/goals' => 'controllers/pm/goals.php',
+    '/admin/pm/feedback' => 'controllers/pm/feedback.php',
+
+    // USER MANAGEMENT
+    '/admin/um/dept_accounts' => 'controllers/um/dept_accounts.php',
+    '/admin/um/dept_audit_trail' => 'controllers/um/dept_audit_trail.php',
 ];

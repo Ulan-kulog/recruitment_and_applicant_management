@@ -1,60 +1,35 @@
-<?php
-ob_start();
-
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data:; font-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';");
-header("X-Content-Type-Options: nosniff");
-header("X-Frame-Options: DENY");
-header("Strict-Transport-Security: max-age=31536000; includeSubDomains; preload");
-
-// This is for the social recognition system
-function sanitize_page($page)
-{
-    return preg_replace('/[^a-zA-Z0-9_-]/', '', $page);
-}
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAM</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AVALON</title>
+    <link rel="shortcut icon" href="/img/Logo.png" type="image/x-icon">
     <link href="/src/output.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="../img/logo.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet" />
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js" defer></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@latest/dist/turbo.es2017-esm.min.js"></script> -->
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4" defer></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <style>
-        .poppins-regular {
-            font-family: "Poppins", sans-serif;
-            font-weight: 300;
-            font-style: normal;
-        }
-
-        .bg-custom {
-            background-image: url(/img/Logo.png);
-            background-position: center;
-            background-size: 600px;
-            background-repeat: no-repeat;
-        }
-
-        /* -------------------------------- */
-        /* this is for social recognition system */
         .sidebar-collapsed {
-            width: 100px;
+            width: 85px;
         }
 
         .sidebar-expanded {
@@ -90,224 +65,6 @@ function sanitize_page($page)
             display: none;
         }
 
-        .menu-name {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .menu-name::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 2px;
-            width: 0;
-            background-color: #4E3B2A;
-            transition: width 0.3s ease;
-        }
-
-        .menu-name:hover::after {
-            width: 100%;
-        }
-
-        /* Logo Styling */
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #594423;
-            background-color: #F7E8CA;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-text img {
-            height: 24px;
-        }
-
-        .sidebar-collapsed .logo-text {
-            display: none;
-        }
-
-        /* Table Styling */
-        .table-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(89, 68, 35, 0.05);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(89, 68, 35, 0.1);
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .table th {
-            background-color: #F7E8CA;
-            padding: 16px 20px;
-            font-weight: 600;
-            color: #594423;
-            text-align: left;
-            border: none;
-            position: relative;
-            font-family: 'Cinzel', serif;
-        }
-
-        .table th:first-child {
-            border-top-left-radius: 8px;
-        }
-
-        .table th:last-child {
-            border-top-right-radius: 8px;
-            text-align: center;
-        }
-
-        .table td {
-            padding: 16px 20px;
-            vertical-align: middle;
-            color: #594423;
-            border-bottom: 1px solid rgba(89, 68, 35, 0.1);
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .actions .btn {
-            padding: 8px;
-            border-radius: 8px;
-            width: 36px;
-            height: 36px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #594423;
-            color: #594423;
-            background-color: transparent;
-            transition: all 0.2s ease;
-        }
-
-        .actions .btn:hover {
-            background-color: #594423;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Button Styling */
-        .btn-primary {
-            background-color: #594423;
-            border-color: #594423;
-            color: white;
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background-color: #4E3B2A;
-            border-color: #4E3B2A;
-        }
-
-        /* Modal Styling */
-        .modal-content {
-            border-radius: 12px;
-            border: none;
-        }
-
-        .modal-header {
-            border-bottom: 1px solid #F7E8CA;
-            padding: 1rem 1.5rem;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #F7E8CA;
-            padding: 1rem 1.5rem;
-        }
-
-        .detail-item {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 15px;
-        }
-
-        .detail-item h6 {
-            color: #495057;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .detail-item p {
-            margin-bottom: 10px;
-            color: #6c757d;
-        }
-
-        .detail-item p strong {
-            color: #495057;
-            font-weight: 600;
-            min-width: 100px;
-            display: inline-block;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #F7E8CA;
-            box-shadow: 0 0 0 0.25rem rgba(89, 68, 35, 0.25);
-        }
-
-        /* Page Header */
-        .page-header {
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .page-header h1 {
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            color: #594423;
-            font-size: 1.75rem;
-            margin: 0;
-        }
-
-        /* Container */
-        .container-fluid {
-            padding: 24px;
-            max-width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .alert {
-            width: 100%;
-            max-width: 900px;
-        }
-
         @media (max-width: 968px) {
             .sidebar {
                 position: fixed;
@@ -326,43 +83,52 @@ function sanitize_page($page)
             .close-sidebar-btn {
                 display: block;
             }
-
-            .table-container {
-                padding: 1rem;
-            }
-
-            .table th,
-            .table td {
-                padding: 12px 10px;
-            }
         }
 
-        /* Minimalist scrollbar styling */
-        /* WebKit browsers */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        .menu-name {
+            position: relative;
+            overflow: hidden;
         }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
+        .menu-name::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 2px;
+            width: 0;
+            background-color: #4e3b2a;
+            transition: width 0.3s ease;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background-color: rgba(89, 68, 35, 0.3);
-            border-radius: 3px;
+        .menu-name:hover::after {
+            width: 100%;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(89, 68, 35, 0.5);
-        }
-
-        /* Firefox */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(89, 68, 35, 0.3) transparent;
+        .poppins-regular {
+            font-family: "Poppins", sans-serif;
+            font-weight: 300;
+            font-style: normal;
         }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#594423',
+                        secondary: '#4E3B2A',
+                        accent: '#F7E6CA',
+                        background: '#FFF6E8',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'cinzel': ['Cinzel', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="min-h-screen bg-[#F7E6CA] text-gray-900 flex flex-col justify-between poppins-regular max-w-full">
+<body class="poppins-regular bg-[#f7e6ca] min-h-screen flex flex-col">

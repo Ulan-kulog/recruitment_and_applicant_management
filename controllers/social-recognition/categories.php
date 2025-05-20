@@ -1,3 +1,4 @@
 <?php
-
-require 'socreg/index.php';
+session_start();
+$heading = 'Categories';
+require 'socreg/finaltemplate.php';

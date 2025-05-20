@@ -1,3 +1,10 @@
+<?php
+$config = require 'config.php';
+$db = new Database($config['database']);
+$notifications = $db->query('SELECT * FROM notifications WHERE `for` = :for', [
+    ':for' => 'admin'
+])->fetchAll();
+?>
 <div class="shadow-sm sticky top-0 z-50">
     <nav class="bg-white h-16 w-full border-b border-[#F7E6CA] flex justify-between items-center px-6 py-4">
         <div class="left-nav flex items-center space-x-4 max-w-96 w-full">
@@ -24,8 +31,9 @@
                 <ul tabindex="0" class="dropdown-content border border-[#594423] menu bg-base-100 rounded-box z-1 w-52 p-2 me-4 mt-4 shadow-sm">
                     <h3 class="py-2.5 px-3 bg-gray-300 rounded-md mb-2">Notifications</h3>
                     <hr>
-                    <li><a>Item 1</a></li>
-                    <li><a>Item 2</a></li>
+                    <?php foreach ($notifications as $notification) : ?>
+                        <li><a><?= $notification['title'] ?></a></li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
 

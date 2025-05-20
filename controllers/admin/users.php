@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 if ($isValid) {
                     if ($_POST['create'] ?? '' === true) {
-                        $usm->query("INSERT INTO user_account (department_id, first_name, last_name, username, email, password, role, register_type) VALUES (:department_id, :first_name, :last_name, :username, :email, :password, :role, :register_type)", [
+                        $usm->query("INSERT INTO department_accounts (department_id, first_name, last_name, username, email, password, role status, module) VALUES (:department_id, :first_name, :last_name, :username, :email, :password, :role, :status, :module)", [
                             ':department_id' => 1,
                             ':first_name' => trim($_POST['first_name']),
                             ':last_name' => trim($_POST['last_name']),
@@ -38,14 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             ':email' => rtrim($_POST['email']),
                             ':password' => password_hash(trim($_POST['password']), PASSWORD_DEFAULT),
                             ':role' => $_POST['role'],
-                            ':register_type' => 'created by admin',
+                            ':status' => 'active',
+                            ':module' => 'recruitment and applicant management',
                         ]);
                         $id = $usm->pdo->lastInsertId();
                         $usm->query("INSERT INTO department_audit_trail(department_id,user_id,action,description,department_affected,module_affected) VALUES (:department_id,:user_id,:action,:description,:department_affected,:module_affected)", [
                             ':department_id' => 1,
                             ':user_id' => $_SESSION['user_id'],
                             ':action' => 'create',
-                            ':description' => "admin: {$_SESSION['username']} just created a new user account with the user ID: {$id}",
+                            ':description' => "admin: {$_SESSION['username']} just created a new user account with the Department Account ID: {$id}",
                             ':department_affected' => 'HR part 1&2',
                             ':module_affected' => 'recruitment and applicant management',
                         ]);

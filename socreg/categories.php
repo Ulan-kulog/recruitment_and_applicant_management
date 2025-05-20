@@ -1,8 +1,22 @@
 <?php
 require_once 'socreg/config.php';
+require_once __DIR__ . '/includes/audit_helpers.php';
+require_once __DIR__ . '/includes/rbac.php';
+
+// Check if user is logged in
+// if (!isset($_SESSION['user_id'])) {
+//     header("Location: login.php");
+//     exit();
+// }
+
+// Check if user has permission to view categories
+// requirePermission('categories', 'view');
 
 // Handle add category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
+    // Check if user has permission to add categories
+    // requirePermission('categories', 'add');
+
     $categoryName = $_POST['category_name'];
     $description = $_POST['description'];
 
@@ -11,8 +25,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
     $stmt->bind_param("ss", $categoryName, $description);
 
     if ($stmt->execute()) {
-        header("Location: ?page=categories&success=add");
-        exit();
+        // Audit trail insert for add category
+        $user_id = $_SESSION['user_id'] ?? 0;
+        $user_name = $_SESSION['name'] ?? '';
+        $role = $_SESSION['role'] ?? '';
+        $department_id = $_SESSION['department_id'] ?? 0;
+        $user_audit_trail_id = 0;
+        $action = 'Add Category';
+        $department_affected = getDepartmentAffectedName($department_id);
+        $module_affected = 'social recognition';
+
+        $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $audit_stmt = $conn->prepare($audit_sql);
+        $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+        $audit_stmt->execute();
+
+        // header("Location: ?page=categories&success=add");
+        // exit();
     } else {
         $error = "Error adding category: " . $conn->error;
     }
@@ -20,6 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
 
 // Handle update category
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_category'])) {
+    // Check if user has permission to edit categories
+    // requirePermission('categories', 'edit');
+
     $categoryID = $_POST['category_id'];
     $categoryName = $_POST['category_name'];
     $description = $_POST['description'];
@@ -29,8 +61,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_category'])) {
     $stmt->bind_param("ssi", $categoryName, $description, $categoryID);
 
     if ($stmt->execute()) {
-        header("Location: ?page=categories&success=update");
-        exit();
+        // Audit trail insert for update category
+        $user_id = $_SESSION['user_id'] ?? 0;
+        $user_name = $_SESSION['name'] ?? '';
+        $role = $_SESSION['role'] ?? '';
+        $department_id = $_SESSION['department_id'] ?? 0;
+        $user_audit_trail_id = 0;
+        $action = 'Update Category';
+        $department_affected = getDepartmentAffectedName($department_id);
+        $module_affected = 'social recognition';
+
+        $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        $audit_stmt = $conn->prepare($audit_sql);
+        $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+        $audit_stmt->execute();
+
+        // header("Location: ?page=categories&success=update");
+        // exit();
     } else {
         $error = "Error updating category: " . $conn->error;
     }
@@ -38,6 +85,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_category'])) {
 
 // Handle delete category
 if (isset($_GET['delete'])) {
+    // Check if user has permission to delete categories
+    // requirePermission('categories', 'delete');
+
     $categoryID = $_GET['delete'];
 
     // Check if category is being used in any awards
@@ -56,8 +106,23 @@ if (isset($_GET['delete'])) {
         $stmt->bind_param("i", $categoryID);
 
         if ($stmt->execute()) {
-            header("Location: ?page=categories&success=delete");
-            exit();
+            // Audit trail insert for delete category
+            $user_id = $_SESSION['user_id'] ?? 0;
+            $user_name = $_SESSION['name'] ?? '';
+            $role = $_SESSION['role'] ?? '';
+            $department_id = $_SESSION['department_id'] ?? 0;
+            $user_audit_trail_id = 0;
+            $action = 'Delete Category';
+            $department_affected = getDepartmentAffectedName($department_id);
+            $module_affected = 'social recognition';
+
+            $audit_sql = "INSERT INTO department_audit_trail (department_id, user_id, user_audit_trail_id, action, department_affected, module_affected, role, user_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $audit_stmt = $conn->prepare($audit_sql);
+            $audit_stmt->bind_param("iiisssss", $department_id, $user_id, $user_audit_trail_id, $action, $department_affected, $module_affected, $role, $user_name);
+            $audit_stmt->execute();
+
+            // header("Location: ?page=categories&success=delete");
+            // exit();
         } else {
             $error = "Error deleting category: " . $conn->error;
         }
@@ -93,11 +158,12 @@ $sql = "SELECT * FROM recognitioncategories ORDER BY CategoryID ASC";
 $result = mysqli_query($conn, $sql);
 ?>
 
-<div class="container-fluid">
-    <div class="page-header">
-        <h1>Categories</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <i class="bi bi-plus-circle me-2"></i> Add Category
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold ">Categories</h1>
+        <button type="button" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors" onclick="document.getElementById('addCategoryModal').classList.remove('hidden')">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Category</span>
         </button>
     </div>
 
@@ -137,67 +203,73 @@ $result = mysqli_query($conn, $sql);
         });
     </script>
 
-    <div class="table-container table-responsive" style="max-width: 1000px; width: 70%; margin: auto;">
-        <table class="table" style="width: 100%;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Category Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><?php echo $row['CategoryID']; ?></td>
-                            <td><?php echo htmlspecialchars($row['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td>
-                                <div class="actions">
-                                    <button class="btn" onclick="viewCategory(<?php echo $row['CategoryID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="View Category">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                    <button class="btn" onclick="editCategory(<?php echo $row['CategoryID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Category">
-                                        <i class="bi bi-pencil"></i>
-                                    </button>
-                                    <button class="btn" onclick="confirmDeleteCategory(<?php echo $row['CategoryID']; ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Category">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
+    <div class="bg-white rounded-lg shadow-sm border border-[#594423] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-[#594423] text-white">
                     <tr>
-                        <td colspan="3" class="text-center">No categories found</td>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Category Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">Actions</th>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody class="divide-y divide-accent">
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr class="hover:bg-accent/30 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo $row['CategoryID']; ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm "><?php echo htmlspecialchars($row['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <button class=" hover: transition-colors" onclick="viewCategory(<?php echo $row['CategoryID']; ?>)" title="View Category">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button class=" hover: transition-colors" onclick="editCategory(<?php echo $row['CategoryID']; ?>)" title="Edit Category">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                        <button class=" hover:text-red-500 transition-colors" onclick="confirmDeleteCategory(<?php echo $row['CategoryID']; ?>)" title="Delete Category">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 text-center text-sm ">No categories found</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <!-- Add Category Modal -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+<div id="addCategoryModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Add New Category</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('addCategoryModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <form method="POST" action="">
-                    <div class="mb-3">
-                        <label for="category_name" class="form-label">Category Name</label>
-                        <input type="text" class="form-control" id="category_name" name="category_name" required>
+                    <div class="mb-4">
+                        <label for="category_name" class="block text-sm font-medium ">Category Name</label>
+                        <input type="text" class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="category_name" name="category_name" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    <div class="mb-4">
+                        <label for="description" class="block text-sm font-medium ">Description</label>
+                        <textarea class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="description" name="description" rows="3"></textarea>
                     </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" name="add_category" class="btn btn-primary ms-2">Add Category</button>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('addCategoryModal').classList.add('hidden')">Cancel</button>
+                        <button type="submit" name="add_category" class="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Add Category</button>
                     </div>
                 </form>
             </div>
@@ -206,31 +278,35 @@ $result = mysqli_query($conn, $sql);
 </div>
 
 <!-- Edit Category Modal -->
-<div class="modal fade" id="editCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+<div id="editCategoryModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Edit Category</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('editCategoryModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <?php if ($edit_category): ?>
                     <form method="POST" action="">
                         <input type="hidden" name="category_id" value="<?php echo $edit_category['CategoryID']; ?>">
-                        <div class="mb-3">
-                            <label for="edit_category_name" class="form-label">Category Name</label>
-                            <input type="text" class="form-control" id="edit_category_name" name="category_name"
+                        <div class="mb-4">
+                            <label for="edit_category_name" class="block text-sm font-medium ">Category Name</label>
+                            <input type="text" class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_category_name" name="category_name"
                                 value="<?php echo htmlspecialchars($edit_category['CategoryName'], ENT_QUOTES, 'UTF-8'); ?>" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_description" class="form-label">Description</label>
-                            <textarea class="form-control" id="edit_description" name="description" rows="3"><?php
-                                                                                                                echo htmlspecialchars($edit_category['Description'], ENT_QUOTES, 'UTF-8');
-                                                                                                                ?></textarea>
+                        <div class="mb-4">
+                            <label for="edit_description" class="block text-sm font-medium ">Description</label>
+                            <textarea class="mt-1 block w-full rounded-md border-accent shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50" id="edit_description" name="description" rows="3"><?php
+                                                                                                                                                                                                                                echo htmlspecialchars($edit_category['Description'], ENT_QUOTES, 'UTF-8');
+                                                                                                                                                                                                                                ?></textarea>
                         </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" name="update_category" class="btn btn-primary ms-2">Update Category</button>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('editCategoryModal').classList.add('hidden')">Cancel</button>
+                            <button type="submit" name="update_category" class="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">Update Category</button>
                         </div>
                     </form>
                 <?php endif; ?>
@@ -240,59 +316,79 @@ $result = mysqli_query($conn, $sql);
 </div>
 
 <!-- View Category Modal -->
-<div class="modal fade" id="viewCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Category Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
+<div id="viewCategoryModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium leading-6 " id="modal-title">Category Details</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-500" onclick="document.getElementById('viewCategoryModal').classList.add('hidden')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
                 <?php if ($view_category): ?>
-                    <div class="category-details">
-                        <div class="detail-item">
-                            <h6>Category Information</h6>
-                            <p><strong>Name:</strong> <?php echo htmlspecialchars($view_category['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></p>
-                            <p><strong>Description:</strong> <?php echo htmlspecialchars($view_category['Description'], ENT_QUOTES, 'UTF-8'); ?></p>
+                    <div class="space-y-4">
+                        <div>
+                            <h6 class="text-sm font-medium  mb-2">Category Information</h6>
+                            <div class="space-y-2">
+                                <p class="text-sm "><span class="font-medium ">Name:</span> <?php echo htmlspecialchars($view_category['CategoryName'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p class="text-sm "><span class="font-medium ">Description:</span> <?php echo htmlspecialchars($view_category['Description'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            </div>
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="alert alert-danger">Category details not found.</div>
+                    <div class="p-4 text-sm text-red-500 bg-red-50 rounded-md">Category details not found.</div>
                 <?php endif; ?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="mt-6 flex justify-end">
+                    <button type="button" class="px-4 py-2 text-sm font-medium  bg-white border border-accent rounded-md hover:bg-accent hover: focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('viewCategoryModal').classList.add('hidden')">Close</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Initialize Bootstrap modals
+    // Initialize modals
     let viewModal, editModal, addModal;
     document.addEventListener('DOMContentLoaded', function() {
-        viewModal = new bootstrap.Modal(document.getElementById('viewCategoryModal'));
-        editModal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
-        addModal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
-
         // Show modals based on URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('view')) {
-            viewModal.show();
+            document.getElementById('viewCategoryModal').classList.remove('hidden');
         }
         if (urlParams.has('edit')) {
-            editModal.show();
+            document.getElementById('editCategoryModal').classList.remove('hidden');
         }
 
         // Handle modal close events
-        const modals = document.querySelectorAll('.modal');
+        const modals = document.querySelectorAll('[id$="Modal"]');
         modals.forEach(modal => {
-            modal.addEventListener('hidden.bs.modal', function() {
-                // Remove URL parameters when modal is closed
-                const url = new URL(window.location);
-                url.searchParams.delete('view');
-                url.searchParams.delete('edit');
-                window.history.replaceState({}, '', url);
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    // Remove URL parameters when modal is closed
+                    const url = new URL(window.location);
+                    url.searchParams.delete('view');
+                    url.searchParams.delete('edit');
+                    window.history.replaceState({}, '', url);
+                }
+            });
+        });
+
+        // Add click event listeners to close buttons
+        document.querySelectorAll('[onclick*="hide()"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('[id$="Modal"]');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    // Remove URL parameters when modal is closed
+                    const url = new URL(window.location);
+                    url.searchParams.delete('view');
+                    url.searchParams.delete('edit');
+                    window.history.replaceState({}, '', url);
+                }
             });
         });
     });
@@ -328,11 +424,11 @@ $result = mysqli_query($conn, $sql);
         });
     }
 
-    // Initialize Bootstrap tooltips
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    });
+    // Initialize Bootstrap tooltips - No longer needed with Tailwind
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    //     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    //         return new bootstrap.Tooltip(tooltipTriggerEl)
+    //     })
+    // });
 </script>

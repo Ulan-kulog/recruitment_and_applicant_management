@@ -18,4 +18,10 @@ return [
         'dbname' => 'sub_user_management',
         'charset' => 'utf8mb4',
     ],
+    'socreg' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'dbname' => 'hr_1_2_social_recognition',
+        'charset' => 'utf8mb4',
+    ],
 ];

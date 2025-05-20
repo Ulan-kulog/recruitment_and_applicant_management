@@ -25,7 +25,7 @@ $notifications = $db->query('SELECT
         </div>
 
         <nav class="w-full sm:w-auto">
-            <ul id="menu" class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 items-center mt-2 sm:mt-0 sm:items-center sm:justify-end hidden sm:flex"> <!-- Adjusted classes -->
+            <ul id="menu" class="flex flex-col sm:flex-row space-x-0 sm:space-x-4 items-center mt-2 sm:mt-0 sm:items-center sm:justify-end hidden sm:flex">
                 <li><a href="/home" class="text-[#594423] font-semibold block py-2 px-2 sm:py-0 sm:px-0 hover:text-[#3D2F1F] transition-colors">Home</a></li>
                 <li><a href="/application" class="text-[#594423] font-semibold block py-2 px-2 sm:py-0 sm:px-0 hover:text-[#3D2F1F] transition-colors">My Applications</a></li>
                 <li>
@@ -44,7 +44,6 @@ $notifications = $db->query('SELECT
         </nav>
     </div>
 
-    <!-- Page Title Section -->
     <div class="flex flex-col md:flex-row justify-between items-center px-2 py-2 md:py-0">
         <div class="text-base md:text-lg font-semibold text-[#594423] flex items-center gap-2 mb-2 md:mb-0">
             <i class="fa-solid fa-user"></i>
@@ -53,7 +52,6 @@ $notifications = $db->query('SELECT
 
         <h1 class="text-xl md:text-2xl font-semibold text-[#594423] mb-2 md:mb-0 text-center"><?= $heading ?></h1>
 
-        <!-- Notification Section -->
         <div class="relative inline-block">
             <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-[#594423] hover:bg-[#F7E6CA] border hover:border-[#594423] hover:text-[#594423] focus:ring-4 focus:outline-none focus:ring-[#594423] font-medium rounded-lg text-sm px-3 py-2 md:px-5 md:py-2.5 text-center inline-flex items-center relative" type="button" data-turbo="false">
                 <i class="fa-solid fa-bell"></i>
@@ -67,7 +65,6 @@ $notifications = $db->query('SELECT
                 <?php endif; ?>
             </button>
 
-            <!-- Dropdown menu -->
             <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-64 max-h-64 overflow-y-auto dark:bg-gray-700 absolute right-0 mt-2">
                 <div class="text-white font-normal py-1 px-2">
                     NOTIFICATIONS

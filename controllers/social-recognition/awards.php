@@ -1,3 +1,4 @@
 <?php
+session_start();
 $heading = "Awards";
-require 'socreg/index.php';
+require 'socreg/finaltemplate.php';
