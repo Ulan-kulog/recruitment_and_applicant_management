@@ -4,11 +4,11 @@ require_once __DIR__ . '/includes/audit_helpers.php';
 require_once __DIR__ . '/includes/rbac.php';
 
 // Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
+// if (!isset($_SESSION['user_id'])) {
+//     header("Location: login.php");
+//     exit();
+// }
+// dd($_SESSION);
 // Check if user has permission to view awards
 // requirePermission('awards', 'view');
 
@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_award'])) {
         $audit_stmt->bind_param("iisssss", $department_id, $user_id, $action, $department_affected, $module_affected, $role, $user_name);
         $audit_stmt->execute();
 
-        header("Location: ?page=awards&success=add");
-        exit();
+        // header("Location: ?page=awards&success=add");
+        // exit();
     } else {
         $error = "Error adding award: " . $conn->error;
     }

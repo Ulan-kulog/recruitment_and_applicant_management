@@ -26,10 +26,23 @@
         </div>
         <div class="col-span-2">
             <label class="block text-[#594423] font-medium mb-1">Company</label>
-            <input type="text" class="w-full p-3 border border-[#594423] rounded-lg focus:ring-2 focus:ring-[#594423]" placeholder="Enter Company" name="company" value="<?= $_POST['company'] ?? '' ?>" required>
-            <?php if (empty($_POST['company'])) : ?>
-                <span class="text-red-500 text-sm ps-3" id="locationError"><?= $errors['company'] ?? '' ?></span>
-            <?php endif ?>
+            <input type="text" class="w-full p-3 border border-[#594423] rounded-lg focus:ring-2 focus:ring-[#594423]" value="Avalon" name="company" value="<?= $_POST['company'] ?? '' ?>" readonly required>
+        </div>
+        <div class="col-span-1">
+            <label class="block text-[#594423] font-medium mb-1">Department</label>
+            <select type="text" class="w-full p-3 border border-[#594423] rounded-lg focus:ring-2 focus:ring-[#594423]" name="department_id" required>
+                <?php foreach ($departments as $department): ?>
+                    <option value="<?= $department['department_id'] ?>"><?= $department['dept_name'] ?></option>
+                <?php endforeach ?>
+            </select>
+        </div>
+        <div class="col-span-1">
+            <label class="block text-[#594423] font-medium mb-1">Role</label>
+            <select type="text" class="w-full p-3 border border-[#594423] rounded-lg focus:ring-2 focus:ring-[#594423]" name="role_id" required>
+                <?php foreach ($roles as $role): ?>
+                    <option value="<?= $role['role_id'] ?>"><?= $role['role_title'] ?></option>
+                <?php endforeach ?>
+            </select>
         </div>
         <div class="md:col-span-2">
             <label class="block text-[#594423] font-medium mb-1">Description</label>

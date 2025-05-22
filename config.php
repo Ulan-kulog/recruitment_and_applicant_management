@@ -12,6 +12,12 @@ return [
         'dbname' => 'hr_ram', //3206_DB
         'charset' => 'utf8mb4',
     ],
+    'nhoes' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'dbname' => 'hr_nhoes',
+        'charset' => 'utf8mb4',
+    ],
     'usm' => [
         'host' => 'localhost',
         'port' => 3306,
@@ -22,6 +28,12 @@ return [
         'host' => 'localhost',
         'port' => 3306,
         'dbname' => 'hr_1_2_social_recognition',
+        'charset' => 'utf8mb4',
+    ],
+    'pm' => [
+        'host' => 'localhost',
+        'port' => 3306,
+        'dbname' => 'hr_pm',
         'charset' => 'utf8mb4',
     ],
 ];

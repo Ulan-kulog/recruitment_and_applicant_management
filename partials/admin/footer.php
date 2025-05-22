@@ -1,4 +1,21 @@
 <script>
+    function toggleNotificationDropdown() {
+        document.getElementById('notif-dropdown').classList.toggle('hidden');
+        document.getElementById('profile-dropdown').classList.add('hidden');
+    }
+    document.addEventListener('click', function(event) {
+        const profileBtn = document.getElementById('profile-btn');
+        const profileDropdown = document.getElementById('profile-dropdown');
+        const notifBtn = document.getElementById('notif-btn');
+        const notifDropdown = document.getElementById('notif-dropdown');
+
+        if (!profileBtn.contains(event.target)) {
+            profileDropdown.classList.add('hidden');
+        }
+        if (!notifBtn.contains(event.target)) {
+            notifDropdown.classList.add('hidden');
+        }
+    });
     const menu = document.querySelector(".menu-btn");
     const sidebar = document.querySelector(".sidebar");
     const main = document.querySelector(".main");

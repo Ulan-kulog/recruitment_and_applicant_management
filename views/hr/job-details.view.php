@@ -42,6 +42,13 @@
             </div>
 
             <div>
+                <h2 class="text-xl font-semibold text-[#594423]">Department</h2>
+                <p class="mt-2 leading-relaxed">
+                    <?= nl2br(htmlspecialchars($dept['dept_name'])) ?>
+                </p>
+            </div>
+
+            <div>
                 <h2 class="text-xl font-semibold text-[#594423]">Salary</h2>
                 <p class="mt-2 font-medium">
                     <?= htmlspecialchars($job['salary']) ?>

@@ -159,13 +159,11 @@ $interview = $db->query("SELECT
   i.mode,
   i.location,
   j.job_title,
-  s.status,
-  u.username
+  s.status
 FROM jobpostings j
 INNER JOIN applicants a ON j.posting_id = a.posting_id
 INNER JOIN interviewschedules i ON a.applicant_id = i.applicant_id
 INNER JOIN applicationstatus s ON a.applicant_id = s.applicant_id
-INNER JOIN user_accounts u ON u.user_id = i.interviewer_id
 WHERE status = :status", [
   ':status' => 'initial-interview'
 ])->fetch();

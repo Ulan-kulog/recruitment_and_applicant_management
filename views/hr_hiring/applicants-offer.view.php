@@ -51,7 +51,7 @@
             <div>
                 <label for="position" class="block text-sm font-medium text-[#594423] mb-1">Position:</label>
                 <input type="text" id="position" name="position" required placeholder="e.g., Senior Web Developer" value="<?= htmlspecialchars($offer['position'] ?? '') ?: $applicant['job_title'] ?>"
-                    class="w-full px-4 py-2 border border-[#594423] rounded-md bg-white text-[#594423] focus:ring-2 focus:ring-[#594423]/50 focus:border-[#594423] outline-none placeholder:text-gray-400">
+                    class="w-full px-4 py-2 border border-[#594423] rounded-md bg-white text-[#594423] focus:ring-2 focus:ring-[#594423]/50 focus:border-[#594423] outline-none placeholder:text-gray-400" readonly>
                 <?php if ($errors['position'] ?? '') : ?>
                     <div class="mt-4 border border-red-800 text-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-[#F7E6CA]" role="alert">
                         <span class="font-medium">Danger alert!</span> <?= $errors['position'] ?>.

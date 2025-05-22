@@ -322,9 +322,9 @@
                 <div id="user-management-dropdown" class="hidden flex-col w-full rounded-lg p-4 bg-[#f7e6ca] space-y-2 mt-2">
                     <ul class="space-y-2">
                         <li><a href="/admin/um/dept_accounts" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Accounts</a></li>
-                        <li><a href="?page=department-log-history" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Log History</a></li>
+                        <li><a href="/admin/um/dept_log_history" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Log History</a></li>
                         <li><a href="/admin/um/dept_audit_trail" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Audit Trail</a></li>
-                        <li><a href="?page=department-transaction" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Transaction</a></li>
+                        <li><a href="/admin/um/dept_transaction" class="text-sm text-[#4E3B2A] hover:text-[#594423] block pl-11">Department Transaction</a></li>
                     </ul>
                 </div>
             </div>

@@ -86,13 +86,13 @@
                     <tbody>
                         <?php foreach ($accounts as $account): ?>
                             <tr>
-                                <th><?= $account['dept_accounts_id'] ?></th>
-                                <td><?= $account['first_name'] . " " . $account['last_name'] ?></td>
-                                <td><?= $account['username'] ?></td>
-                                <td><?= $account['email'] ?></td>
-                                <td><?= $account['status'] ?></td>
-                                <td><?= $account['module'] ?></td>
-                                <td><i class="fa-solid fa-eye"></i></td>
+                                <th><?= htmlspecialchars($account['dept_accounts_id']) ?></th>
+                                <td><?= htmlspecialchars($account['first_name'] . " " . $account['last_name']) ?></td>
+                                <td><?= htmlspecialchars($account['username']) ?></td>
+                                <td><?= htmlspecialchars($account['email']) ?></td>
+                                <td><?= htmlspecialchars($account['status']) ?></td>
+                                <td><?= htmlspecialchars($account['module']) ?></td>
+                                <td><a href="/admin/um/dept_accounts-view?id=<?= htmlspecialchars($account['dept_accounts_id']) ?>"><i class="fa-solid fa-eye"></i></a></td>
                             </tr>
                         <?php endforeach ?>
                     </tbody>
@@ -104,7 +104,6 @@
 <script>
     $('#addBtn').on('click', function() {
         $('#addModal').toggleClass('hidden');
-        // $('#addBtn').toggleClass('hidden');
     });
     $('#addSubmitBtn').on('click', function() {
         let isValid = true;

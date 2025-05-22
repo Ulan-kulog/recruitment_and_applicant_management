@@ -33,6 +33,15 @@
                                 <td><i class="fa-solid fa-eye"></i></td>
                             </tr>
                         <?php endforeach ?>
+                        <?php foreach ($pm as $pm_audit): ?>
+                            <tr>
+                                <th><?= $pm_audit['User_Audit_Trail_ID'] ?></th>
+                                <td><?= $pm_audit['Action'] ?></td>
+                                <td><?= $pm_audit['Department_Affected'] ?></td>
+                                <td><?= $pm_audit['Module_Affected'] ?></td>
+                                <td><i class="fa-solid fa-eye"></i></td>
+                            </tr>
+                        <?php endforeach ?>
                     </tbody>
                 </table>
             </div>

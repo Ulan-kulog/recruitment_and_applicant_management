@@ -89,5 +89,9 @@ return [
 
     // USER MANAGEMENT
     '/admin/um/dept_accounts' => 'controllers/um/dept_accounts.php',
+    '/admin/um/dept_accounts-view' => 'controllers/um/dept_accounts-view.php',
     '/admin/um/dept_audit_trail' => 'controllers/um/dept_audit_trail.php',
+    '/admin/um/dept_log_history' => 'controllers/um/dept_log_history.php',
+    '/admin/um/dept_log_history-view' => 'controllers/um/dept_log_history-view.php',
+    '/admin/um/dept_transaction' => 'controllers/um/dept_transaction.php',
 ];

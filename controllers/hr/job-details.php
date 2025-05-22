@@ -5,6 +5,7 @@ session_start();
 $heading = 'Job';
 $config = require 'config.php';
 $db = new Database($config['database']);
+$usm = new Database($config['usm']);
 
 $user = $db->query("SELECT posted_by FROM jobpostings WHERE posting_id = :posting_id", [
     ':posting_id' => $_GET['id'],
@@ -49,7 +50,11 @@ WHERE p.posting_id = :posting_id', [
     ':posting_id' => $_GET['id'],
 ])->fetch();
 
-// dd($job);
+$dept = $usm->query("SELECT * FROM departments WHERE department_id = :department_id", [
+    ':department_id' => $job['department_id'],
+])->fetch();
+
+// dd($dept);
 
 $applications = $db->query("SELECT * FROM applicants")->fetchAll();
 

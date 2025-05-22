@@ -1,9 +1,19 @@
 <?php
 $config = require 'config.php';
 $db = new Database($config['database']);
-$notifications = $db->query('SELECT * FROM notifications WHERE `for` = :for', [
+$pm = new Database($config['pm']);
+$soc = new Database($config['socreg']);
+$notifs = [];
+$notifications = $db->query('SELECT title, message FROM notifications WHERE `for` = :for', [
     ':for' => 'admin'
 ])->fetchAll();
+
+$pm_notifs = $pm->query('SELECT action FROM user_audit_trail')->fetchAll();
+// dd($pm_notifs);
+$socreg_notifs = $soc->query('SELECT title, message FROM notifications')->fetchAll();
+// dd($socreg_notifs);
+$notifs = $notifications + $socreg_notifs;
+// dd($notifs);
 ?>
 <div class="shadow-sm sticky top-0 z-50">
     <nav class="bg-white h-16 w-full border-b border-[#F7E6CA] flex justify-between items-center px-6 py-4">
@@ -23,18 +33,28 @@ $notifications = $db->query('SELECT * FROM notifications WHERE `for` = :for', [
 
 
             </button>
-            <div class="dropdown dropdown-center">
-                <div tabindex="0" role="button" class="">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                    <span class="absolute top-0.5 right-0 block w-2.5 h-2.5 bg-[#594423] rounded-full"></span>
+
+            <div class="relative" id="notif-container">
+                <div class="cursor-pointer" onclick="toggleNotificationDropdown()" id="notif-btn">
+                    <i class="fa-regular fa-bell bg-[#594423] text-white px-4 py-2 rounded-lg text-lg" aria-label="Notifications"></i>
+                    <span class="absolute top-0 right-0 block h-2 w-2 rounded-full ring-2 ring-white bg-red-500"></span>
                 </div>
-                <ul tabindex="0" class="dropdown-content border border-[#594423] menu bg-base-100 rounded-box z-1 w-52 p-2 me-4 mt-4 shadow-sm">
-                    <h3 class="py-2.5 px-3 bg-gray-300 rounded-md mb-2">Notifications</h3>
-                    <hr>
-                    <?php foreach ($notifications as $notification) : ?>
-                        <li><a><?= $notification['title'] ?></a></li>
-                    <?php endforeach; ?>
-                </ul>
+
+                <div id="notif-dropdown"
+                    class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded shadow-lg z-50 hidden">
+                    <div class="px-4 py-2 text-sm text-[#4E3B2A] font-semibold border-b">Notifications</div>
+                    <div class="max-h-60 overflow-y-auto">
+                        <?php foreach ($notifications as $notification) : ?>
+                            <li class="px-4 py-2 text-sm text-gray-600 border-b hover:bg-[#f7e6ca]"><a><?= $notification['title'] ?></a></li>
+                        <?php endforeach; ?>
+                        <?php foreach ($pm_notifs as $pm_notif) : ?>
+                            <li class="px-4 py-2 text-sm text-gray-600 border-b hover:bg-[#f7e6ca"><a><?= $pm_notif['action'] ?></a></li>
+                        <?php endforeach; ?>
+                        <?php foreach ($socreg_notifs as $soc_notif) : ?>
+                            <li class="px-4 py-2 text-sm text-gray-600 border-b hover:bg-[#f7e6ca"><a><?= $soc_notif['message'] ?></a></li>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
             </div>
 
             <div class="relative">

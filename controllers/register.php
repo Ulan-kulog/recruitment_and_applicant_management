@@ -7,7 +7,7 @@ $db = new Database($config['database']);
 $usm = new Database($config['usm']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $users = $db->query('SELECT username,email FROM user_accounts')->fetchAll();
+    $users = $usm->query('SELECT username,email FROM user_account')->fetchAll();
     $errors = [];
     $success = false;
     $email = $_POST['email'];

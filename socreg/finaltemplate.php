@@ -30,7 +30,7 @@ function sanitize_page($page)
 }
 
 ?>
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -61,13 +61,13 @@ function sanitize_page($page)
         }
     </script>
 </head>
+<?php require "partials/admin/head.php" ?>
 
-<body class="bg-background font-inter text-primary"> -->
-<?php require 'partials/admin/head.php' ?>
-<div class="flex min-h-screen w-full">
-    <!-- Overlay $$ Sidebar -->
-    <?php require 'partials/admin/sidebar.php' ?>
-    <!-- <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="sidebar-overlay"></div>
+<body class="bg-background font-inter text-primary">
+    <div class="flex min-h-screen w-full">
+        <!-- Overlay $$ Sidebar -->
+        <?php require 'partials/admin/sidebar.php' ?>
+        <!-- <div class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" id="sidebar-overlay"></div>
 
     <div class="sidebar fixed z-50 h-screen bg-white border-r border-accent flex flex-col transition-all duration-300 ease-in-out w-[320px]">
         <div class="h-16 border-b border-accent flex items-center px-6 justify-between">
@@ -249,11 +249,11 @@ function sanitize_page($page)
         </div>
     </div> -->
 
-    <!-- Main Content -->
-    <div class="main w-full md:ml-[320px] bg-[#f7e6ca]">
-        <!-- Navbar -->
-        <?php require 'partials/admin/navbar.php' ?>
-        <!-- <nav class="h-16 w-full bg-white border-b border-accent flex justify-between items-center px-6">
+        <!-- Main Content -->
+        <div class="main w-full md:ml-[320px] bg-[#f7e6ca]">
+            <!-- Navbar -->
+            <?php require 'partials/admin/navbar.php' ?>
+            <!-- <nav class="h-16 w-full bg-white border-b border-accent flex justify-between items-center px-6">
             <div class="flex items-center space-x-4">
                 <button id="menu-toggle" class="text-secondary hover:bg-accent p-2 rounded-lg">
                     <i class="fa-solid fa-bars text-xl"></i>
@@ -292,350 +292,349 @@ function sanitize_page($page)
             </div>
         </nav> -->
 
-        <!-- Page Content -->
-        <div class="p-6">
-            <?php
-            // Determine which page to include based on the query parameter
-            if (isset($_GET['page'])) {
-                $page = sanitize_page($_GET['page']);
-                switch ($page) {
-                    case 'recognition-dashboard':
-                        include 'recognition-dashboard.php';
-                        break;
-                    case 'awards':
-                        include 'awards.php';
-                        break;
-                    case 'recognitions':
-                        include 'recognitions.php';
-                        break;
-                    case 'categories':
-                        include 'categories.php';
-                        break;
-                    case 'dashboard':
-                        echo '<h1 class="text-2xl font-bold text-secondary mb-6">Dashboard</h1>';
-                        echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
-                        echo '<p class="text-primary">Welcome to the HR Management System Dashboard.</p>';
-                        echo '</div>';
-                        break;
-                    case 'department-accounts':
-                        include 'user_management/department-accounts.php';
-                        break;
-                    case 'department-log-history':
-                        include 'user_management/department-log-history.php';
-                        break;
-                    case 'department-audit-trail':
-                        include 'user_management/department-audit-trail.php';
-                        break;
-                    case 'department-transaction':
-                        include 'user_management/department-transaction.php';
-                        break;
-                    default:
-                        echo '<h1 class="text-2xl font-bold text-secondary mb-6">Page Not Found</h1>';
-                        echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
-                        echo '<p class="text-primary">The requested page could not be found.</p>';
-                        echo '</div>';
+            <!-- Page Content -->
+            <div class="p-6">
+                <?php
+                // Determine which page to include based on the query parameter
+                if (isset($_GET['page'])) {
+                    $page = sanitize_page($_GET['page']);
+                    switch ($page) {
+                        case 'recognition-dashboard':
+                            include 'recognition-dashboard.php';
+                            break;
+                        case 'awards':
+                            include 'awards.php';
+                            break;
+                        case 'recognitions':
+                            include 'recognitions.php';
+                            break;
+                        case 'categories':
+                            include 'categories.php';
+                            break;
+                        case 'dashboard':
+                            echo '<h1 class="text-2xl font-bold text-secondary mb-6">Dashboard</h1>';
+                            echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
+                            echo '<p class="text-primary">Welcome to the HR Management System Dashboard.</p>';
+                            echo '</div>';
+                            break;
+                        case 'department-accounts':
+                            include 'user_management/department-accounts.php';
+                            break;
+                        case 'department-log-history':
+                            include 'user_management/department-log-history.php';
+                            break;
+                        case 'department-audit-trail':
+                            include 'user_management/department-audit-trail.php';
+                            break;
+                        case 'department-transaction':
+                            include 'user_management/department-transaction.php';
+                            break;
+                        default:
+                            echo '<h1 class="text-2xl font-bold text-secondary mb-6">Page Not Found</h1>';
+                            echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
+                            echo '<p class="text-primary">The requested page could not be found.</p>';
+                            echo '</div>';
+                    }
+                } else {
+                    echo '<h1 class="text-2xl font-bold text-secondary mb-6">Dashboard</h1>';
+                    echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
+                    echo '<p class="text-primary">Welcome to the HR Management System Dashboard.</p>';
+                    echo '</div>';
                 }
-            } else {
-                echo '<h1 class="text-2xl font-bold text-secondary mb-6">Dashboard</h1>';
-                echo '<div class="bg-white rounded-lg p-6 shadow-sm border border-accent">';
-                echo '<p class="text-primary">Welcome to the HR Management System Dashboard.</p>';
-                echo '</div>';
-            }
-            ?>
+                ?>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Footer -->
-<?php require 'partials/admin/footer.php' ?>
-<!-- <script>
-    function toggleDropdown(dropdownId, element) {
-        const dropdown = document.getElementById(dropdownId);
-        const icon = element.querySelector('.arrow-icon');
-        const allDropdowns = document.querySelectorAll('.menu-drop');
-        const allIcons = document.querySelectorAll('.arrow-icon');
+    <!-- Footer -->
+    <!-- <script>
+        function toggleDropdown(dropdownId, element) {
+            const dropdown = document.getElementById(dropdownId);
+            const icon = element.querySelector('.arrow-icon');
+            const allDropdowns = document.querySelectorAll('.menu-drop');
+            const allIcons = document.querySelectorAll('.arrow-icon');
 
-        // Close all other dropdowns
-        allDropdowns.forEach(d => {
-            if (d.id !== dropdownId && !d.classList.contains('hidden')) {
-                d.classList.add('hidden');
-            }
-        });
+            // Close all other dropdowns
+            allDropdowns.forEach(d => {
+                if (d.id !== dropdownId && !d.classList.contains('hidden')) {
+                    d.classList.add('hidden');
+                }
+            });
 
-        // Reset all other icons
-        allIcons.forEach(i => {
-            if (i !== icon) {
-                i.classList.remove('bx-chevron-down');
-                i.classList.add('bx-chevron-right');
-            }
-        });
+            // Reset all other icons
+            allIcons.forEach(i => {
+                if (i !== icon) {
+                    i.classList.remove('bx-chevron-down');
+                    i.classList.add('bx-chevron-right');
+                }
+            });
 
-        // Toggle current dropdown
-        dropdown.classList.toggle('hidden');
-        icon.classList.toggle('bx-chevron-right');
-        icon.classList.toggle('bx-chevron-down');
-    }
+            // Toggle current dropdown
+            dropdown.classList.toggle('hidden');
+            icon.classList.toggle('bx-chevron-right');
+            icon.classList.toggle('bx-chevron-down');
+        }
 
 
-    // Mobile menu toggle
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    const mainContent = document.querySelector('.main');
-    const menuTexts = document.querySelectorAll('.menu-option span, .menu-option .arrow');
-    const logoName = document.querySelector('.h-6');
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const mainContent = document.querySelector('.main');
+        const menuTexts = document.querySelectorAll('.menu-option span, .menu-option .arrow');
+        const logoName = document.querySelector('.h-6');
 
-    function toggleSidebar() {
-        if (window.innerWidth <= 768) { // Mobile view
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-            document.body.classList.toggle('overflow-hidden');
-        } else { // Desktop view
-            if (sidebar.classList.contains('w-[320px]')) {
-                // Collapse sidebar
-                sidebar.classList.remove('w-[320px]');
-                sidebar.classList.add('w-[100px]');
-                mainContent.classList.remove('md:ml-[320px]');
-                mainContent.classList.add('md:ml-[100px]');
-                // Hide text and arrows
-                menuTexts.forEach(text => text.classList.add('opacity-0', 'hidden'));
-                logoName.classList.add('opacity-0', 'hidden');
-            } else {
-                // Expand sidebar
-                sidebar.classList.remove('w-[100px]');
-                sidebar.classList.add('w-[320px]');
-                mainContent.classList.remove('md:ml-[100px]');
-                mainContent.classList.add('md:ml-[320px]');
-                // Show text and arrows
-                menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
-                logoName.classList.remove('opacity-0', 'hidden');
+        function toggleSidebar() {
+            if (window.innerWidth <= 768) { // Mobile view
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+                document.body.classList.toggle('overflow-hidden');
+            } else { // Desktop view
+                if (sidebar.classList.contains('w-[320px]')) {
+                    // Collapse sidebar
+                    sidebar.classList.remove('w-[320px]');
+                    sidebar.classList.add('w-[100px]');
+                    mainContent.classList.remove('md:ml-[320px]');
+                    mainContent.classList.add('md:ml-[100px]');
+                    // Hide text and arrows
+                    menuTexts.forEach(text => text.classList.add('opacity-0', 'hidden'));
+                    logoName.classList.add('opacity-0', 'hidden');
+                } else {
+                    // Expand sidebar
+                    sidebar.classList.remove('w-[100px]');
+                    sidebar.classList.add('w-[320px]');
+                    mainContent.classList.remove('md:ml-[100px]');
+                    mainContent.classList.add('md:ml-[320px]');
+                    // Show text and arrows
+                    menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
+                    logoName.classList.remove('opacity-0', 'hidden');
+                }
             }
         }
-    }
 
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) { // Desktop view
-            overlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-            if (!sidebar.classList.contains('w-[320px]') && !sidebar.classList.contains('w-[100px]')) {
-                sidebar.classList.add('w-[320px]');
-                mainContent.classList.add('md:ml-[320px]');
-                // Show text and arrows
-                menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
-                logoName.classList.remove('opacity-0', 'hidden');
-            }
-        } else { // Mobile view
-            sidebar.classList.add('-translate-x-full');
-            if (!overlay.classList.contains('hidden')) {
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) { // Desktop view
                 overlay.classList.add('hidden');
                 document.body.classList.remove('overflow-hidden');
-            }
-            // Show text and arrows for mobile
-            menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
-            logoName.classList.remove('opacity-0', 'hidden');
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize sidebar state
-        if (window.innerWidth <= 768) {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-
-        // Add event listeners
-        menuToggle.addEventListener('click', toggleSidebar);
-        overlay.addEventListener('click', toggleSidebar);
-
-        // Close sidebar when clicking a menu link (for mobile)
-        const menuLinks = document.querySelectorAll('.menu-option a');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.add('-translate-x-full');
+                if (!sidebar.classList.contains('w-[320px]') && !sidebar.classList.contains('w-[100px]')) {
+                    sidebar.classList.add('w-[320px]');
+                    mainContent.classList.add('md:ml-[320px]');
+                    // Show text and arrows
+                    menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
+                    logoName.classList.remove('opacity-0', 'hidden');
+                }
+            } else { // Mobile view
+                sidebar.classList.add('-translate-x-full');
+                if (!overlay.classList.contains('hidden')) {
                     overlay.classList.add('hidden');
                     document.body.classList.remove('overflow-hidden');
                 }
-            });
+                // Show text and arrows for mobile
+                menuTexts.forEach(text => text.classList.remove('opacity-0', 'hidden'));
+                logoName.classList.remove('opacity-0', 'hidden');
+            }
         });
 
-        // Ensure overlay is hidden and sidebar is interactive on page load
-        overlay.classList.remove('active');
-        sidebar.classList.remove('mobile-active');
-        document.body.classList.remove('overflow-hidden');
-    });
-
-    // Auto-expand the Social Recognition dropdown if on an awards/recognition page
-    document.addEventListener('DOMContentLoaded', function() {
-        const currentPage = window.location.search;
-        if (currentPage.includes('page=awards') ||
-            currentPage.includes('page=recognitions') ||
-            currentPage.includes('page=categories') ||
-            currentPage.includes('page=recognition-dashboard')) {
-
-            const recognitionDropdown = document.getElementById('recognition-dropdown');
-            const recognitionIcon = document.querySelector('[onclick="toggleDropdown(\'recognition-dropdown\', this)"] .arrow-icon');
-
-            if (recognitionDropdown && recognitionIcon) {
-                recognitionDropdown.classList.remove('hidden');
-                recognitionIcon.classList.remove('bx-chevron-right');
-                recognitionIcon.classList.add('bx-chevron-down');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize sidebar state
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
             }
-        }
 
-        // Auto-expand the User Management dropdown if on a user management subpage
-        if (currentPage.includes('page=department-accounts') ||
-            currentPage.includes('page=department-log-history') ||
-            currentPage.includes('page=department-audit-trail') ||
-            currentPage.includes('page=department-transaction')) {
+            // Add event listeners
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
 
-            const userManagementDropdown = document.getElementById('user-management-dropdown');
-            const userManagementIcon = document.querySelector('[onclick="toggleDropdown(\'user-management-dropdown\', this)"] .arrow-icon');
-
-            if (userManagementDropdown && userManagementIcon) {
-                userManagementDropdown.classList.remove('hidden');
-                userManagementIcon.classList.remove('bx-chevron-right');
-                userManagementIcon.classList.add('bx-chevron-down');
-            }
-        }
-    });
-
-    // Notification System
-    document.addEventListener('DOMContentLoaded', function() {
-        const notificationBtn = document.getElementById('notification-btn');
-        const notificationDropdown = document.getElementById('notification-dropdown');
-        const notificationList = document.getElementById('notification-list');
-        const notificationBadge = document.getElementById('notification-badge');
-        const markAllReadBtn = document.getElementById('mark-all-read');
-
-        // Function to mark notification as read
-        window.markAsRead = function(id) {
-            console.log(`Marking notification ${id} as read`);
-
-            fetch('notifications.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: `action=mark_read&id=${id}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response:', data);
-
-                    if (!data.success) {
-                        console.error('Failed to mark as read:', data.message);
-                        return;
+            // Close sidebar when clicking a menu link (for mobile)
+            const menuLinks = document.querySelectorAll('.menu-option a');
+            menuLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.add('-translate-x-full');
+                        overlay.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
                     }
+                });
+            });
 
-                    // Find the notification item
-                    const notificationItem = document.querySelector(`.notification-item[data-id="${id}"]`);
-                    if (notificationItem) {
-                        const actionsDiv = notificationItem.querySelector('.notification-actions');
-                        notificationItem.classList.remove('unread');
-                        actionsDiv.innerHTML = `
+            // Ensure overlay is hidden and sidebar is interactive on page load
+            overlay.classList.remove('active');
+            sidebar.classList.remove('mobile-active');
+            document.body.classList.remove('overflow-hidden');
+        });
+
+        // Auto-expand the Social Recognition dropdown if on an awards/recognition page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.search;
+            if (currentPage.includes('page=awards') ||
+                currentPage.includes('page=recognitions') ||
+                currentPage.includes('page=categories') ||
+                currentPage.includes('page=recognition-dashboard')) {
+
+                const recognitionDropdown = document.getElementById('recognition-dropdown');
+                const recognitionIcon = document.querySelector('[onclick="toggleDropdown(\'recognition-dropdown\', this)"] .arrow-icon');
+
+                if (recognitionDropdown && recognitionIcon) {
+                    recognitionDropdown.classList.remove('hidden');
+                    recognitionIcon.classList.remove('bx-chevron-right');
+                    recognitionIcon.classList.add('bx-chevron-down');
+                }
+            }
+
+            // Auto-expand the User Management dropdown if on a user management subpage
+            if (currentPage.includes('page=department-accounts') ||
+                currentPage.includes('page=department-log-history') ||
+                currentPage.includes('page=department-audit-trail') ||
+                currentPage.includes('page=department-transaction')) {
+
+                const userManagementDropdown = document.getElementById('user-management-dropdown');
+                const userManagementIcon = document.querySelector('[onclick="toggleDropdown(\'user-management-dropdown\', this)"] .arrow-icon');
+
+                if (userManagementDropdown && userManagementIcon) {
+                    userManagementDropdown.classList.remove('hidden');
+                    userManagementIcon.classList.remove('bx-chevron-right');
+                    userManagementIcon.classList.add('bx-chevron-down');
+                }
+            }
+        });
+
+        // Notification System
+        document.addEventListener('DOMContentLoaded', function() {
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            const notificationList = document.getElementById('notification-list');
+            const notificationBadge = document.getElementById('notification-badge');
+            const markAllReadBtn = document.getElementById('mark-all-read');
+
+            // Function to mark notification as read
+            window.markAsRead = function(id) {
+                console.log(`Marking notification ${id} as read`);
+
+                fetch('notifications.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: `action=mark_read&id=${id}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Response:', data);
+
+                        if (!data.success) {
+                            console.error('Failed to mark as read:', data.message);
+                            return;
+                        }
+
+                        // Find the notification item
+                        const notificationItem = document.querySelector(`.notification-item[data-id="${id}"]`);
+                        if (notificationItem) {
+                            const actionsDiv = notificationItem.querySelector('.notification-actions');
+                            notificationItem.classList.remove('unread');
+                            actionsDiv.innerHTML = `
                             <button class="btn btn-link btn-sm text-decoration-none p-0 mark-unread" onclick="markAsUnread(${id})">
                                 Mark as unread
                             </button>
                         `;
-                    }
+                        }
 
-                    // Update all notifications to refresh counts
-                    loadNotifications();
-                })
-                .catch(error => {
-                    console.error('Error marking as read:', error);
-                });
-        };
+                        // Update all notifications to refresh counts
+                        loadNotifications();
+                    })
+                    .catch(error => {
+                        console.error('Error marking as read:', error);
+                    });
+            };
 
-        // Function to mark notification as unread
-        window.markAsUnread = function(id) {
-            console.log(`Marking notification ${id} as unread`);
+            // Function to mark notification as unread
+            window.markAsUnread = function(id) {
+                console.log(`Marking notification ${id} as unread`);
 
-            fetch('notifications.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: `action=mark_unread&id=${id}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Response:', data);
+                fetch('notifications.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: `action=mark_unread&id=${id}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Response:', data);
 
-                    if (!data.success) {
-                        console.error('Failed to mark as unread:', data.message);
-                        return;
-                    }
+                        if (!data.success) {
+                            console.error('Failed to mark as unread:', data.message);
+                            return;
+                        }
 
-                    // Find the notification item
-                    const notificationItem = document.querySelector(`.notification-item[data-id="${id}"]`);
-                    if (notificationItem) {
-                        const actionsDiv = notificationItem.querySelector('.notification-actions');
-                        notificationItem.classList.add('unread');
-                        actionsDiv.innerHTML = `
+                        // Find the notification item
+                        const notificationItem = document.querySelector(`.notification-item[data-id="${id}"]`);
+                        if (notificationItem) {
+                            const actionsDiv = notificationItem.querySelector('.notification-actions');
+                            notificationItem.classList.add('unread');
+                            actionsDiv.innerHTML = `
                             <button class="text-xs text-secondary hover:text-primary mark-read" onclick="markAsRead(${id})">
                                 Mark as read
                             </button>
                         `;
-                    }
+                        }
 
-                    // Update all notifications to refresh counts
-                    loadNotifications();
-                })
-                .catch(error => {
-                    console.error('Error marking as unread:', error);
-                });
-        };
+                        // Update all notifications to refresh counts
+                        loadNotifications();
+                    })
+                    .catch(error => {
+                        console.error('Error marking as unread:', error);
+                    });
+            };
 
-        // Toggle notification dropdown
-        notificationBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            notificationDropdown.classList.toggle('hidden');
-            loadNotifications();
-        });
+            // Toggle notification dropdown
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('hidden');
+                loadNotifications();
+            });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
-                notificationDropdown.classList.add('hidden');
-            }
-        });
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+                    notificationDropdown.classList.add('hidden');
+                }
+            });
 
-        // Load notifications
-        function loadNotifications() {
-            // Fetch notifications from the server
-            fetch('notifications.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: 'action=get_notifications'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        console.error('Failed to fetch notifications:', data.message);
-                        return;
-                    }
+            // Load notifications
+            function loadNotifications() {
+                // Fetch notifications from the server
+                fetch('notifications.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: 'action=get_notifications'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to fetch notifications:', data.message);
+                            return;
+                        }
 
-                    notificationList.innerHTML = '';
-                    let unreadCount = 0;
+                        notificationList.innerHTML = '';
+                        let unreadCount = 0;
 
-                    if (data.notifications.length === 0) {
-                        notificationList.innerHTML = `
+                        if (data.notifications.length === 0) {
+                            notificationList.innerHTML = `
                             <div class="p-4 text-center text-sm text-primary">
                                 No notifications
                             </div>
                         `;
-                    } else {
-                        data.notifications.forEach(notification => {
-                            if (!notification.read) unreadCount++;
-                            notificationList.innerHTML += `
+                        } else {
+                            data.notifications.forEach(notification => {
+                                if (!notification.read) unreadCount++;
+                                notificationList.innerHTML += `
                                 <div class="p-4 border-b border-accent hover:bg-accent transition-colors ${!notification.read ? 'bg-background' : ''} notification-item" data-id="${notification.id}">
                                     <div class="flex items-start space-x-3">
                                         <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
@@ -660,72 +659,74 @@ function sanitize_page($page)
                                     </div>
                                 </div>
                             `;
-                        });
-                    }
+                            });
+                        }
 
-                    // Update badge
-                    if (unreadCount > 0) {
-                        notificationBadge.classList.remove('hidden');
-                    } else {
-                        notificationBadge.classList.add('hidden');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading notifications:', error);
-                    notificationList.innerHTML = `
+                        // Update badge
+                        if (unreadCount > 0) {
+                            notificationBadge.classList.remove('hidden');
+                        } else {
+                            notificationBadge.classList.add('hidden');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading notifications:', error);
+                        notificationList.innerHTML = `
                         <div class="p-4 text-center text-sm text-red-500">
                             Error loading notifications
                         </div>
                     `;
-                });
-        }
-
-        // Mark all as read
-        markAllReadBtn.addEventListener('click', function() {
-            fetch('notifications.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: 'action=mark_all_read'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        console.error('Failed to mark all as read:', data.message);
-                        return;
-                    }
-                    loadNotifications();
-                })
-                .catch(error => console.error('Error marking all as read:', error));
-        });
-
-        // Update notifications every 30 seconds
-        setInterval(loadNotifications, 30000);
-
-        // Initial load of notifications
-        loadNotifications();
-    });
-
-    // User Dropdown
-    document.addEventListener('DOMContentLoaded', function() {
-        const userDropdownToggle = document.getElementById('userDropdownToggle');
-        const userDropdownMenu = document.getElementById('userDropdownMenu');
-
-        userDropdownToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            userDropdownMenu.classList.toggle('hidden');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!userDropdownMenu.contains(e.target) && !userDropdownToggle.contains(e.target)) {
-                userDropdownMenu.classList.add('hidden');
+                    });
             }
+
+            // Mark all as read
+            markAllReadBtn.addEventListener('click', function() {
+                fetch('notifications.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: 'action=mark_all_read'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            console.error('Failed to mark all as read:', data.message);
+                            return;
+                        }
+                        loadNotifications();
+                    })
+                    .catch(error => console.error('Error marking all as read:', error));
+            });
+
+            // Update notifications every 30 seconds
+            setInterval(loadNotifications, 30000);
+
+            // Initial load of notifications
+            loadNotifications();
         });
-    });
-</script>
+
+        // User Dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDropdownToggle = document.getElementById('userDropdownToggle');
+            const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+            userDropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdownMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!userDropdownMenu.contains(e.target) && !userDropdownToggle.contains(e.target)) {
+                    userDropdownMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html> -->
+
+    <?php require "partials/admin/footer.php" ?>

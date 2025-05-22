@@ -1,4 +1,4 @@
 <?php
-// session_start();
+session_start();
 $heading = "APPRAISAL";
 require 'pm/appraisals.php';
